@@ -1,0 +1,15 @@
+{
+  "name": "susu",
+  "version": "1.0.0",
+  "description": "A bot inspire by xuxu",
+  "main": "susu.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "manhtai",
+  "license": "MIT",
+  "dependencies": {
+    "botkit": "^0.2.2",
+    "botkit-storage-mongo": "^1.0.4"
+  }
+}
