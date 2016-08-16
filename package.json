@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "botkit": "^0.2.2",
-    "botkit-storage-mongo": "^1.0.4"
+    "botkit-storage-mongo": "^1.0.4",
+    "node-wit": "^4.0.0"
   }
 }
