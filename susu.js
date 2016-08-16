@@ -49,6 +49,6 @@ controller.hears(
     ['.*'],
     'direct_message,direct_mention,mention',
     (bot, message) => {
-        bot.reply(message, "Èo, tôi chả hiểu bạn nói gì. Để tôi học thêm đã ~~");
+        bot.reply(message, "Èo, mình chả hiểu bạn nói gì. Để mình học thêm ít đã ~~");
     }
 );
