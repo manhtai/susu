@@ -2,7 +2,6 @@
 
 // Set our bot up
 const Botkit = require('botkit');
-const Wit = require('node-wit').Wit;
 const config = require('./const');
 const util = require('./util');
 
@@ -11,11 +10,17 @@ const controller = Botkit.slackbot({
     debug: true
 });
 
-const bot = controller.spawn({
+
+let bot = controller.spawn({
     token: config.SLACK_API_TOKEN
 }).startRTM();
 
-const wit = new Wit({accessToken: config.WIT_TOKEN});
+
+controller.on('rtm_close', function() {
+    bot = controller.spawn({
+        token: config.SLACK_API_TOKEN
+    }).startRTM();
+});
 
 
 controller.hears(['savequote', 'save quote'],
@@ -25,47 +30,18 @@ controller.hears(['savequote', 'save quote'],
         controller.storage.users.get(message.user, (err, user) => {
             // Some logs
             if (user && user.quotes) {
-                bot.reply(message, 'You\'ve had ' + user.quotes.length + ' quotes so far.');
+                bot.reply(message, 'You\'ve had ' + user.quotes.length + ' quotes so far. Save some more to make the the list longer!');
             } else {
                 bot.reply(message, 'Yay, start saving awesome quotes now!');
             }
 
-
             const askContent = (response, convo) => {
                 convo.ask('What is the new quote content?', (response, convo) => {
-                    convo.ask('So here is your quote: `' + response.text + '`? I know who you are, so don\'t give me shit here!', [
+                    convo.ask('So here is your quote?\n```\n' + response.text + '\n```\n I know who you are, so please don\'t give me shit here.', [
                         {
                             pattern: bot.utterances.yes,
                             callback: (response, convo) => {
-                                convo.next();
-                            }
-                        },
-                        {
-                            pattern: bot.utterances.no,
-                            callback: (response, convo) => {
-                                convo.stop();
-                            }
-                        },
-                        {
-                            default: true,
-                            callback: (response, convo) => {
-                                convo.repeat();
-                                convo.next();
-                            }
-                        }
-                    ]);
-                    askAuthor(response, convo);
-                    convo.next();
-
-                }, {'key': 'content'});
-            };
-
-            const askAuthor = (response, convo) => {
-                convo.ask('Okay now, who is the author then?', (response, convo) => {
-                    convo.ask('Just for sure, the quote\'s author is: `' + response.text + '`, right?', [
-                        {
-                            pattern: bot.utterances.yes,
-                            callback: (response, convo) => {
+                                askAuthor(response, convo);
                                 convo.next();
                             }
                         },
@@ -85,6 +61,35 @@ controller.hears(['savequote', 'save quote'],
                     ]);
 
                     notifyComplete(response, convo);
+                    convo.next();
+
+                }, {'key': 'content'});
+            };
+
+            const askAuthor = (response, convo) => {
+                convo.ask('Okay now, who is the author then?', (response, convo) => {
+                    convo.ask('Just for sure, the quote\'s author is `' + response.text + '`, right?', [
+                        {
+                            pattern: bot.utterances.yes,
+                            callback: (response, convo) => {
+                                convo.next();
+                            }
+                        },
+                        {
+                            pattern: bot.utterances.no,
+                            callback: (response, convo) => {
+                                convo.stop();
+                            }
+                        },
+                        {
+                            default: true,
+                            callback: (response, convo) => {
+                                convo.repeat();
+                                convo.next();
+                            }
+                        }
+                    ]);
+
                     convo.next();
 
                 }, {'key': 'author'});
@@ -168,34 +173,6 @@ controller.hears(
         });
 });
 
-controller.hears(
-    ['wit (.*)'],
-    'direct_message,direct_mention,mention',
-    (bot, message) => {
-        let text = message.match[1];
-        let context = {};
-        controller.storage.users.get(message.user, (err, user) => {
-            if (!user) {
-                user = {
-                    id: message.user,
-                    context: context
-                };
-            } else {
-                context = user.context;
-            }
-        });
-        wit.message(text, context)
-        .then((data) => {
-            bot.reply(message, "Entities received from Wit.ai");
-            let entities = data.entities;
-            Object.keys(entities).forEach(function (entity) {
-              let arr = entities[entity];
-              bot.reply(message, `${entity}: ${JSON.stringify(arr)}`);
-            });
-        })
-        .catch(console.error);
-    }
-);
 
 controller.hears(
     ['.*'],
