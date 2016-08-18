@@ -11,15 +11,25 @@ const controller = Botkit.slackbot({
 });
 
 
-let bot = controller.spawn({
+const bot = controller.spawn({
     token: config.SLACK_API_TOKEN
-}).startRTM();
+});
+
+// start bot
+bot.startRTM((err) => {
+    if (err) {
+        process.exit(1);
+    }
+});
 
 
+// restart bot
 controller.on('rtm_close', function() {
-    bot = controller.spawn({
-        token: config.SLACK_API_TOKEN
-    }).startRTM();
+    bot.startRTM((err) => {
+        if (err) {
+            process.exit(1);
+        }
+    });
 });
 
 
