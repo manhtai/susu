@@ -2,6 +2,7 @@
 
 // Set our bot up
 const Botkit = require('botkit');
+const cowsay = require('cowsay');
 const config = require('./const');
 const util = require('./util');
 
@@ -24,7 +25,7 @@ bot.startRTM((err) => {
 
 
 // restart bot
-controller.on('rtm_close', function() {
+controller.on('rtm_close', () => {
     bot.startRTM((err) => {
         if (err) {
             process.exit(1);
@@ -185,6 +186,40 @@ controller.hears(
 
 
 controller.hears(
+    ['cowsay (.*)', 'cowthink (.*)'],
+    'direct_message,direct_mention,mention',
+    (bot, message) => {
+        const text = message.match[1];
+        const say = message.match[0].slice(0, 6) == 'cowsay' ?
+            cowsay.say({ text: text }) :
+            cowsay.think({ text: text });
+        bot.reply(
+            message,
+            '```\n' + say + '\n```'
+        );
+    }
+);
+
+
+controller.hears(
+    ['help'],
+    'direct_message,direct_mention,mention',
+    (bot, message) => {
+        bot.api.reactions.add({
+            timestamp: message.ts,
+            channel: message.channel,
+            name: 'triumph',
+        }, (err, res) => {
+            if (err) {
+                bot.botkit.log('Failed to add emoji reaction :(', err);
+            }
+        });
+        bot.reply(message, "Type `save quote` so save your own quote, and `show a quote` to show a quote from our team member, or `show my quote` to just show your quote.");
+    }
+);
+
+
+controller.hears(
     ['.*'],
     'direct_message,direct_mention,mention',
     (bot, message) => {
@@ -200,7 +235,7 @@ controller.hears(
         if (message.user == "U0NHW80HH") {// It's me
             bot.reply(message, "Hello, boss!");
         } else {
-            bot.reply(message, "Type `save quote` so save your own quote, and `show a quote` to show a quote from our team member, or `show my quote` to just show your quote.");
+            bot.reply(message, "Type `help` so I know you really need me.");
         }
     }
 );
