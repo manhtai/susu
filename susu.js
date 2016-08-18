@@ -3,6 +3,7 @@
 // Set our bot up
 const Botkit = require('botkit');
 const cowsay = require('cowsay');
+const cool = require('cool-ascii-faces');
 const config = require('./const');
 const util = require('./util');
 
@@ -235,7 +236,7 @@ controller.hears(
         if (message.user == "U0NHW80HH") {// It's me
             bot.reply(message, "Hello, boss!");
         } else {
-            bot.reply(message, "Type `help` so I know you really need me.");
+            bot.reply(message, "Type `help` so I know you really need me " + cool());
         }
     }
 );

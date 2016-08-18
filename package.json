@@ -11,8 +11,9 @@
   "dependencies": {
     "botkit": "^0.2.2",
     "botkit-storage-mongo": "^1.0.4",
-    "node-wit": "^4.0.0",
-    "cowsay": "^1.1.8"
+    "cool-ascii-faces": "^1.3.4",
+    "cowsay": "^1.1.8",
+    "node-wit": "^4.0.0"
   },
   "engines": {
     "node": "6.1.0"
