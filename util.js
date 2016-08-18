@@ -3,7 +3,7 @@ function randomInt (low, high) {
 }
 
 function formatQuote (quote) {
-    return '*' + quote.content + '* | _' + quote.author + '_';
+    return '*' + quote.content + '*\n  _~ ' + quote.author + '_';
 }
 
 module.exports = {
