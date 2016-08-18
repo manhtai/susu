@@ -11,12 +11,10 @@
   "dependencies": {
     "botkit": "^0.2.2",
     "botkit-storage-mongo": "^1.0.4",
-    "node-wit": "^4.0.0"
+    "node-wit": "^4.0.0",
+    "cowsay": "^1.1.8"
   },
   "engines": {
     "node": "6.1.0"
-  },
-  "devDependencies": {
-    "cowsay": "^1.1.8"
   }
 }
