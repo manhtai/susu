@@ -233,7 +233,7 @@ controller.hears(
                 bot.botkit.log('Failed to add emoji reaction :(', err);
             }
         });
-        if (message.user == "U0NHW80HH") {// It's me
+        if (message.user == config.BOT_BOSS) {
             bot.reply(message, "Hello, boss!");
         } else {
             bot.reply(message, "Type `help` so I know you really need me " + cool());
