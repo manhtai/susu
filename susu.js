@@ -187,17 +187,22 @@ controller.hears(
 
 
 controller.hears(
-    ['cowsay (.*)', 'cowthink (.*)'],
+    ['^(\\S+)say (.*)'],
     'direct_message,direct_mention,mention',
     (bot, message) => {
-        const text = message.match[1];
-        const say = message.match[0].slice(0, 6) == 'cowsay' ?
-            cowsay.say({ text: text }) :
-            cowsay.think({ text: text });
-        bot.reply(
-            message,
-            '```\n' + say + '\n```'
-        );
+        let animal = message.match[1];
+        const text = message.match[2];
+        console.log(animal, text);
+        cowsay.list((_, cows) => {
+            if (cows.indexOf(animal) === -1) {
+                animal = 'default';
+            }
+            const cow = cowsay.say({ text: text, f: animal });
+            bot.reply(
+                message,
+                '```\n' + cow + '\n```'
+            );
+        });
     }
 );
 
