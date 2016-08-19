@@ -4,6 +4,9 @@
 const Botkit = require('botkit');
 const cowsay = require('cowsay');
 const cool = require('cool-ascii-faces');
+const google = require('googleapis').customsearch('v1');
+
+
 const config = require('./const');
 const util = require('./util');
 
@@ -203,6 +206,36 @@ controller.hears(
                 '```\n' + cow + '\n```'
             );
         });
+    }
+);
+
+
+controller.hears(
+    ['^google (.*)'],
+    'direct_message,direct_mention,mention',
+    (bot, message) => {
+        let q = message.match[1];
+        google.cse.list({
+            cx: config.GOOGLE_CX,
+            auth: config.GOOGLE_API_KEY,
+            q: q
+        }, (err, resp) => {
+          if (err) {
+            return bot.botkit.log('An error occured', err);
+          }
+          // bot.botkit.log('Result: ' + resp.searchInformation.formattedTotalResults);
+          if (resp.items && resp.items.length > 0) {
+              let text = "Top " + resp.items.length + " results:\n\n";
+              text += resp.items.map((item, i) => {
+                  let order = i + 1;
+                  return order + '. *' + item.title + '* ~> ' + item.link;
+              }).join('\n');
+              bot.reply(message, text);
+          } else {
+              bot.reply(message, 'Even Google can not find it, awesome!');
+          }
+        });
+        bot.botkit.log("User " + message.user + " search: " + q);
     }
 );
 
