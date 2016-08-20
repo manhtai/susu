@@ -3,12 +3,12 @@
 // Set our bot up
 const Botkit = require('botkit');
 const cowsay = require('cowsay');
-const cool = require('cool-ascii-faces');
+const cool   = require('cool-ascii-faces');
 
 
 const config = require('./const');
-const util = require('./util');
-const words = require('./wordsapi');
+const util   = require('./util');
+const words  = require('./wordsapi');
 const google = require('./google');
 
 
@@ -51,14 +51,18 @@ controller.hears(['savequote', 'save quote'],
         controller.storage.users.get(message.user, (err, user) => {
             // Some logs
             if (user && user.quotes) {
-                bot.reply(message, 'You\'ve had ' + user.quotes.length + ' quotes so far. Save some more to make the the list longer!');
+                bot.reply(message, `You've had ${user.quotes.length} quotes so far. Save some more to make the the list longer!`);
             } else {
                 bot.reply(message, 'Yay, start saving awesome quotes now!');
             }
 
             const askContent = (response, convo) => {
                 convo.ask('What is the new quote content?', (response, convo) => {
-                    convo.ask('So here is your quote?\n```\n' + response.text + '\n```\n I know who you are, so please don\'t give me shit here.', [
+                    convo.ask(`So here is your quote?
+                    \n\n
+                    _${response.text}_
+                    \n\n
+                    I know who you are, so please don't give me shit here.`, [
                         {
                             pattern: bot.utterances.yes,
                             callback: (response, convo) => {
@@ -89,7 +93,7 @@ controller.hears(['savequote', 'save quote'],
 
             const askAuthor = (response, convo) => {
                 convo.ask('Okay now, who is the author then?', (response, convo) => {
-                    convo.ask('Just for sure, the quote\'s author is `' + response.text + '`, right?', [
+                    convo.ask(`Just for sure, the quote's author is \`${response.text}\`, right?`, [
                         {
                             pattern: bot.utterances.yes,
                             callback: (response, convo) => {
@@ -134,7 +138,7 @@ controller.hears(['savequote', 'save quote'],
                                 'author': convo.extractResponse('author')
                             });
                             controller.storage.users.save(user, (err, id) => {
-                                bot.reply(message, 'Got it. Now you had ' + user.quotes.length + ' quotes written in my book.');
+                                bot.reply(message, `Got it. Now you had ${user.quotes.length} quotes written in my book.`);
                             });
                         });
 
@@ -233,19 +237,18 @@ controller.hears(
                 if (err) {
                   return bot.botkit.log('An error occured', err);
                 }
-                // bot.botkit.log('Result: ' + resp.searchInformation.formattedTotalResults);
                 if (resp.items && resp.items.length > 0) {
-                    let text = "Top " + resp.items.length + " results:\n\n";
+                    let text = `Top ${resp.items.length} results:\n\n`;
                     text += resp.items.map((item, i) => {
                         let order = i + 1;
-                        return order + '. *' + item.title + '* ~> ' + item.link;
+                        return `${order}. *${item.title}* ~> ${item.link}`;
                     }).join('\n');
                     bot.reply(message, text);
                 } else {
                     bot.reply(message, 'Even Google can not find it, awesome!');
                 }
         });
-        bot.botkit.log("User " + message.user + " search: " + q);
+        bot.botkit.log(`User ${message.user} search: ${q}`);
     }
 );
 
@@ -264,12 +267,12 @@ controller.hears(
                     result.push(pronunciation);
                 } else {
                     Object.keys(pronunciation).forEach((key) => {
-                      result.push("To " + key + ": *" + pronunciation[key] + "*");
+                      result.push(`To ${key}: *${pronunciation[key]}*`);
                     });
                 }
                 bot.reply(message, result.join("\n"));
             } else {
-                bot.reply(message, "I can't even speak, sorry!");
+                bot.reply(message, "I can't even speak it right, sorry!");
             }
         });
     }
@@ -286,18 +289,18 @@ controller.hears(['^shutdown$'],
             process.exit();
         } else {
             const askAgain = (response, convo) => {
-                convo.ask('Why do you want me to die, won\'t you miss me?', [
+                convo.ask(`Why do you want me to die, won't you miss me?`, [
                     {
                         pattern: bot.utterances.yes,
                         callback: (response, convo) => {
-                            bot.reply(message, "Yay, I know you do, so I won't leave you anytime soon then! " + cool());
+                            bot.reply(message, `Yay, I know you do, so I won't leave you anytime soon then! ${cool()}`);
                             convo.next();
                         }
                     },
                     {
                         pattern: bot.utterances.no,
                         callback: (response, convo) => {
-                            bot.reply(message, "Opps, it's because we don't know much about each other yet, I'll stay so we will be friends! " + cool());
+                            bot.reply(message, `Opps, it's because we don't know much about each other yet, I'll stay so we can become friends! ${cool()}`);
                             convo.next();
                         }
                     },
