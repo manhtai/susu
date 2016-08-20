@@ -12,10 +12,13 @@ const BOT_BOSS = process.env.BOT_BOSS;
 const GOOGLE_CX = process.env.GOOGLE_CX;
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
+const WORDS_API = process.env.WORDS_API;
+
 module.exports = {
     mongoStorage: mongoStorage,
     SLACK_API_TOKEN: SLACK_API_TOKEN,
     BOT_BOSS: BOT_BOSS,
     GOOGLE_CX: GOOGLE_CX,
-    GOOGLE_API_KEY: GOOGLE_API_KEY
+    GOOGLE_API_KEY: GOOGLE_API_KEY,
+    WORDS_API: WORDS_API
 };

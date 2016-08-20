@@ -4,11 +4,13 @@
 const Botkit = require('botkit');
 const cowsay = require('cowsay');
 const cool = require('cool-ascii-faces');
-const google = require('googleapis').customsearch('v1');
 
 
 const config = require('./const');
 const util = require('./util');
+const words = require('./wordsapi');
+const google = require('./google');
+
 
 const controller = Botkit.slackbot({
     storage: config.mongoStorage,
@@ -37,7 +39,11 @@ controller.on('rtm_close', () => {
     });
 });
 
+// Bypass tick log
+controller.on('tick', () => {});
 
+
+// Start conversation to save quote
 controller.hears(['savequote', 'save quote'],
     'direct_message,direct_mention,mention',
     (bot, message) => {
@@ -160,6 +166,8 @@ controller.hears(['savequote', 'save quote'],
         });
 });
 
+
+// Show your quotes
 controller.hears(
     ['showmyquote', 'show my quote'],
     'direct_message,direct_mention,mention',
@@ -174,6 +182,8 @@ controller.hears(
         });
 });
 
+
+// Show quotes from your team
 controller.hears(
     ['showaquote', 'show a quote'],
     'direct_message,direct_mention,mention,message_received',
@@ -189,6 +199,7 @@ controller.hears(
 });
 
 
+// https://github.com/piuccio/cowsay
 controller.hears(
     ['^(\\S+)say (.*)'],
     'direct_message,direct_mention,mention',
@@ -210,54 +221,62 @@ controller.hears(
 );
 
 
+//  https://github.com/google/google-api-nodejs-client
 controller.hears(
-    ['^google (.*)'],
+    ['^search (.*)'],
     'direct_message,direct_mention,mention',
     (bot, message) => {
         let q = message.match[1];
-        google.cse.list({
-            cx: config.GOOGLE_CX,
-            auth: config.GOOGLE_API_KEY,
-            q: q
-        }, (err, resp) => {
-          if (err) {
-            return bot.botkit.log('An error occured', err);
-          }
-          // bot.botkit.log('Result: ' + resp.searchInformation.formattedTotalResults);
-          if (resp.items && resp.items.length > 0) {
-              let text = "Top " + resp.items.length + " results:\n\n";
-              text += resp.items.map((item, i) => {
-                  let order = i + 1;
-                  return order + '. *' + item.title + '* ~> ' + item.link;
-              }).join('\n');
-              bot.reply(message, text);
-          } else {
-              bot.reply(message, 'Even Google can not find it, awesome!');
-          }
+        google.searchText(
+            q,
+            (err, resp) => {
+                if (err) {
+                  return bot.botkit.log('An error occured', err);
+                }
+                // bot.botkit.log('Result: ' + resp.searchInformation.formattedTotalResults);
+                if (resp.items && resp.items.length > 0) {
+                    let text = "Top " + resp.items.length + " results:\n\n";
+                    text += resp.items.map((item, i) => {
+                        let order = i + 1;
+                        return order + '. *' + item.title + '* ~> ' + item.link;
+                    }).join('\n');
+                    bot.reply(message, text);
+                } else {
+                    bot.reply(message, 'Even Google can not find it, awesome!');
+                }
         });
         bot.botkit.log("User " + message.user + " search: " + q);
     }
 );
 
 
+// https://www.wordsapi.com/
 controller.hears(
-    ['help'],
+    ['^say (.*)'],
     'direct_message,direct_mention,mention',
     (bot, message) => {
-        bot.api.reactions.add({
-            timestamp: message.ts,
-            channel: message.channel,
-            name: 'triumph',
-        }, (err, res) => {
-            if (err) {
-                bot.botkit.log('Failed to add emoji reaction :(', err);
+        let word = message.match[1].replace(/^\s+|\s+$/g, '');
+        words.pronounceWord(word, (err, body) => {
+            if (!err && body.pronunciation) {
+                let pronunciation = body.pronunciation;
+                let result = [];
+                if (typeof(pronunciation) === 'string') {
+                    result.push(pronunciation);
+                } else {
+                    Object.keys(pronunciation).forEach((key) => {
+                      result.push("To " + key + ": *" + pronunciation[key] + "*");
+                    });
+                }
+                bot.reply(message, result.join("\n"));
+            } else {
+                bot.reply(message, "I can't even speak, sorry!");
             }
         });
-        bot.reply(message, "Type `save quote` so save your own quote, and `show a quote` to show a quote from our team member, or `show my quote` to just show your quote.");
     }
 );
 
 
+// Catch all
 controller.hears(
     ['.*'],
     'direct_message,direct_mention,mention',
@@ -274,7 +293,10 @@ controller.hears(
         if (message.user == config.BOT_BOSS) {
             bot.reply(message, "Hello, boss!");
         } else {
-            bot.reply(message, "Type `help` so I know you really need me " + cool());
+            bot.reply(
+                message,
+                cool() + " hi there!\n" +
+                "I can help you to `search`, `say`, `cowsay`, `savequote`, `showaquote`, and much more to come!");
         }
     }
 );

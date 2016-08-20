@@ -11,5 +11,8 @@ A Slack bot built with Botkit
 
 ## Features
 
+- search
+- pronounce
+- cowsay
 - saving quotes
 - ...
