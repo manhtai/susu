@@ -58,11 +58,7 @@ controller.hears(['savequote', 'save quote'],
 
             const askContent = (response, convo) => {
                 convo.ask('What is the new quote content?', (response, convo) => {
-                    convo.ask(`So here is your quote?
-                    \n\n
-                    _${response.text}_
-                    \n\n
-                    I know who you are, so please don't give me shit here.`, [
+                    convo.ask(`So here is your quote? \n\n *"${response.text}"*\n`, [
                         {
                             pattern: bot.utterances.yes,
                             callback: (response, convo) => {
@@ -160,7 +156,7 @@ controller.hears(['savequote', 'save quote'],
 
                     } else {
                         // this happens if the conversation ended prematurely for some reason
-                        bot.reply(message, 'OK, nevermind!');
+                        bot.reply(message, `OK, nevermind! ${cool()}`);
                     }
                 });
             };
