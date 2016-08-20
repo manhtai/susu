@@ -276,6 +276,47 @@ controller.hears(
 );
 
 
+// Start conversation to shotdown me
+controller.hears(['^shutdown$'],
+    'direct_message,direct_mention,mention',
+    (bot, message) => {
+
+        if (message.user == config.BOT_BOSS) {
+            bot.reply(message, "Goodbye, boss!");
+            process.exit();
+        } else {
+            const askAgain = (response, convo) => {
+                convo.ask('Why do you want me to die, won\'t you miss me?', [
+                    {
+                        pattern: bot.utterances.yes,
+                        callback: (response, convo) => {
+                            bot.reply(message, "Yay, I know you do, so I won't leave you anytime soon then! " + cool());
+                            convo.next();
+                        }
+                    },
+                    {
+                        pattern: bot.utterances.no,
+                        callback: (response, convo) => {
+                            bot.reply(message, "Opps, it's because we don't know much about each other yet, I'll stay so we will be friends! " + cool());
+                            convo.next();
+                        }
+                    },
+                    {
+                        default: true,
+                        callback: (response, convo) => {
+                            convo.repeat();
+                            convo.next();
+                        }
+                    }
+                ]);
+                convo.next();
+            };
+
+            bot.startConversation(message, askAgain);
+    }
+});
+
+
 // Catch all
 controller.hears(
     ['.*'],
@@ -296,7 +337,7 @@ controller.hears(
             bot.reply(
                 message,
                 cool() + " hi there!\n" +
-                "I can help you to `search`, `say`, `cowsay`, `savequote`, `showaquote`, and much more to come!");
+                "I can help you to `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` me and much more to come!");
         }
     }
 );
