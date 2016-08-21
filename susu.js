@@ -222,18 +222,20 @@ controller.hears(
 
 //  https://github.com/google/google-api-nodejs-client
 controller.hears(
-    ['^search (.*)'],
+    ['^search(i|) (.*)'],
     'direct_message,direct_mention,mention',
     (bot, message) => {
-        let q = message.match[1];
+        const t = message.match[1] == 'i' ? 'image' : null;
+        const l = t == 'image' ? 'images' : 'things';
+        const q = message.match[2];
         google.searchText(
-            q,
+            q, t,
             (err, resp) => {
                 if (err) {
                   return bot.botkit.log('An error occured', err);
                 }
                 if (resp.items && resp.items.length > 0) {
-                    let text = `Top ${resp.items.length} results:\n\n`;
+                    let text = `Hey, I found ${resp.items.length} ${l} for you ${cool()}\n\n`;
                     text += resp.items.map((item, i) => {
                         let order = i + 1;
                         return `${order}. *${item.title}* ~> ${item.link}`;
