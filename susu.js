@@ -8,7 +8,7 @@ const cool   = require('cool-ascii-faces');
 
 const config = require('./const');
 const util   = require('./util');
-const words  = require('./wordsapi');
+const dict   = require('./dictionary');
 const google = require('./google');
 
 
@@ -202,7 +202,7 @@ controller.hears(
 // https://github.com/piuccio/cowsay
 controller.hears(
     ['^(\\S+)say (.*)'],
-    'direct_message,direct_mention,mention',
+    'direct_message,direct_mention,mention,ambient',
     (bot, message) => {
         let animal = message.match[1];
         const text = message.match[2];
@@ -223,7 +223,7 @@ controller.hears(
 //  https://github.com/google/google-api-nodejs-client
 controller.hears(
     ['^search(i|) (.*)'],
-    'direct_message,direct_mention,mention',
+    'direct_message,direct_mention,mention,ambient',
     (bot, message) => {
         const t = message.match[1] == 'i' ? 'image' : null;
         const l = t == 'image' ? 'images' : 'things';
@@ -250,25 +250,37 @@ controller.hears(
 );
 
 
-// https://www.wordsapi.com/
+// http://www.dictionaryapi.com/
 controller.hears(
     ['^say (.*)'],
-    'direct_message,direct_mention,mention',
+    'direct_message,direct_mention,mention,ambient',
     (bot, message) => {
-        let word = message.match[1].replace(/^\s+|\s+$/g, '');
-        words.pronounceWord(word, (err, body) => {
-            if (!err && body.pronunciation) {
-                let pronunciation = body.pronunciation;
+        let word = message.match[1].trim();
+        dict.pronounceWord(word, (err, body, sound) => {
+            try {
+                let entry_list = body.entry_list;
                 let result = [];
-                if (typeof(pronunciation) === 'string') {
-                    result.push(pronunciation);
-                } else {
-                    Object.keys(pronunciation).forEach((key) => {
-                      result.push(`To ${key}: *${pronunciation[key]}*`);
+                if (entry_list.entry) {
+                    entry_list.entry.forEach((entry, index) => {
+                        console.log(entry.hw);
+                        if (util.isSame(entry.hw[0]._, word) || util.isSame(entry.hw[0], word)) {
+                            let r = '';
+                            if (entry.fl) r += `${entry.fl[0]} ~> `;
+                            if (entry.pr) {
+                                r += `\`${entry.pr[0]}\` ~> ${sound+entry.sound[0].wav[0]}`;
+                                result.push(r);
+                            }
+                        }
                     });
+                    result = result.join('\n');
+                } else if (entry_list.suggestion) {
+                    entry_list.suggestion.forEach((suggestion, index) => {
+                        result.push(`\`${suggestion}\``);
+                    });
+                    result = `I can't find your word, but here are some suggestions: ${result.join(', ')}.`;
                 }
-                bot.reply(message, result.join("\n"));
-            } else {
+                bot.reply(message, result);
+            } catch (e) {
                 bot.reply(message, "I can't even speak it right, sorry!");
             }
         });

@@ -2,9 +2,9 @@
   "name": "susu",
   "version": "1.0.0",
   "description": "A bot inspire by xuxu",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/manhtai/susu.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/manhtai/susu.git"
   },
   "main": "susu.js",
   "scripts": {
@@ -19,7 +19,8 @@
     "cowsay": "^1.1.8",
     "googleapis": "^12.3.0",
     "node-wit": "^4.0.0",
-    "request": "^2.74.0"
+    "request": "^2.74.0",
+    "xml2js": "^0.4.17"
   },
   "engines": {
     "node": "6.1.0"
