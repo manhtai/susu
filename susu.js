@@ -206,7 +206,6 @@ controller.hears(
     (bot, message) => {
         let animal = message.match[1];
         const text = message.match[2];
-        console.log(animal, text);
         cowsay.list((_, cows) => {
             if (cows.indexOf(animal) === -1) {
                 animal = 'default';
