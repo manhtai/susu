@@ -262,14 +262,11 @@ controller.hears(
                 let result = [];
                 if (entry_list.entry) {
                     entry_list.entry.forEach((entry, index) => {
-                        console.log(entry.hw);
-                        if (util.isSame(entry.hw[0]._, word) || util.isSame(entry.hw[0], word)) {
-                            let r = '';
-                            if (entry.fl) r += `${entry.fl[0]} ~> `;
-                            if (entry.pr) {
-                                r += `\`${entry.pr[0]}\` ~> ${sound+entry.sound[0].wav[0]}`;
-                                result.push(r);
-                            }
+                        let r = '';
+                        if (entry.fl) r += `${entry.fl[0]} ~> `;
+                        if (entry.pr) {
+                            r += `\`${entry.pr[0]}\` ~> ${sound+entry.sound[0].wav[0]}`;
+                            result.push(r);
                         }
                     });
                     result = result.join('\n');
