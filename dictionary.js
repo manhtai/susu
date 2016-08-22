@@ -7,7 +7,6 @@ const parseString = require('xml2js').parseString;
 
 
 const pronounceWord = (word, cb) => {
-    let sound = `http://media.merriam-webster.com/soundc11`;
     request({
         url: `http://www.dictionaryapi.com/api/v1/references/learners/xml/${word}`,
         qs: {
@@ -16,7 +15,7 @@ const pronounceWord = (word, cb) => {
         method: 'GET'
     }, (err, resp, body) => {
         if (!err && !resp.body.err) {
-            parseString(body, (err, result) => cb(err, result, sound));
+            parseString(body, (err, result) => cb(err, result));
         } else {
             cb(true);
         }
@@ -24,7 +23,22 @@ const pronounceWord = (word, cb) => {
 };
 
 
-module.exports = {
-    pronounceWord: pronounceWord
+const audioLink = (word) => {
+    let base = `http://media.merriam-webster.com/soundc11`;
+    let sound;
+    if (word.match(/^(gg|bix)/)) {
+        let match = word.match(/^(gg|bix)/);
+        sound = `${base}/${match[1]}/${word}`;
+    } else if (word.match(/^[1-9]/)) {
+        sound = `${base}/number/${word}`;
+    } else {
+        sound = `${base}/${word[0]}/${word}`;
+    }
+    return sound;
 };
 
+
+module.exports = {
+    pronounceWord: pronounceWord,
+    audioLink: audioLink
+};
