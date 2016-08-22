@@ -13,7 +13,7 @@ function formatQuote (quote) {
 
 function isSame (w1, w2) {
     if (!(typeof(w1) == 'string' && typeof(w2) == 'string')) return false;
-    return w1.toLowerCase() == w2.toLowerCase();
+    return w1.toLowerCase().indexOf(w2.toLowerCase()) === 0;
 }
 
 module.exports = {
