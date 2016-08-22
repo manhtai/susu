@@ -274,7 +274,7 @@ controller.hears(
                                 p = true;
                             }
                             if (entry.sound) {
-                                r += ` ~> ${sound+entry.sound[0].wav[0]}`;
+                                r += ` ~> ${sound}/${entry.sound[0].wav[0][0]}/${entry.sound[0].wav[0]}`;
                             }
                             if (p) {
                                 result.push(r);

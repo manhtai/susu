@@ -7,7 +7,7 @@ const parseString = require('xml2js').parseString;
 
 
 const pronounceWord = (word, cb) => {
-    let sound = `http://media.merriam-webster.com/soundc11/${word[0]}/`;
+    let sound = `http://media.merriam-webster.com/soundc11/`;
     request({
         url: `http://www.dictionaryapi.com/api/v1/references/learners/xml/${word}`,
         qs: {
