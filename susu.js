@@ -262,13 +262,12 @@ controller.hears(
                 let result = [];
                 if (entry_list.entry) {
                     entry_list.entry.forEach((entry, index) => {
-                        console.log(`${JSON.stringify(entry)}`);
                         if (util.isSame(entry.$.id, word)) {
                             let r = `*${entry.hw[0]._ || entry.hw[0]}*`;
                             let p = false;
                             if (entry.fl) r += ` [${entry.fl[0]}]`;
                             if (entry.pr) {
-                                r += ` ~> \`${entry.pr[0]}\``;
+                                r += ` ~> \`${entry.pr[0]._ || entry.pr[0]}\``;
                                 p = true;
                             } else if (entry.altpr) {
                                 r += ` ~> \`${entry.altpr[0]}\``;
