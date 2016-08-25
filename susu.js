@@ -202,7 +202,7 @@ controller.hears(
 // https://github.com/piuccio/cowsay
 controller.hears(
     ['^(\\S+)say (.*)'],
-    'direct_message,direct_mention,mention,ambient',
+    'direct_message,direct_mention,mention',
     (bot, message) => {
         let animal = message.match[1];
         const text = message.match[2];
@@ -223,7 +223,7 @@ controller.hears(
 //  https://github.com/google/google-api-nodejs-client
 controller.hears(
     ['^search(i|) (.*)'],
-    'direct_message,direct_mention,mention,ambient',
+    'direct_message,direct_mention,mention',
     (bot, message) => {
         const t = message.match[1] == 'i' ? 'image' : null;
         const l = t == 'image' ? 'images' : 'things';
@@ -253,7 +253,7 @@ controller.hears(
 // http://www.dictionaryapi.com/
 controller.hears(
     ['^say (.*)'],
-    'direct_message,direct_mention,mention,ambient',
+    'direct_message,direct_mention,mention',
     (bot, message) => {
         let word = message.match[1].trim();
         dict.pronounceWord(word, (err, body) => {
