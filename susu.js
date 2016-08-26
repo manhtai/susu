@@ -10,6 +10,7 @@ const config = require('./const');
 const util   = require('./util');
 const dict   = require('./dictionary');
 const google = require('./google');
+const cow = require('./cow');
 
 
 const controller = Botkit.slackbot({
@@ -206,15 +207,25 @@ controller.hears(
     (bot, message) => {
         let animal = message.match[1];
         const text = message.match[2];
-        cowsay.list((_, cows) => {
-            if (cows.indexOf(animal) === -1) {
-                animal = 'default';
+        cow.list((err, cows) => {
+            if (!err) {
+                let found;
+                for (let cow of cows) {
+                    if (cow.indexOf(animal) > -1) {
+                        found = true;
+                        animal = cow;
+                        break;
+                    }
+                }
+                if (!found) {
+                    animal = 'default';
+                }
+                const cow = cowsay.say({ text: text, f: animal });
+                bot.reply(
+                    message,
+                    '```\n' + cow + '\n```'
+                );
             }
-            const cow = cowsay.say({ text: text, f: animal });
-            bot.reply(
-                message,
-                '```\n' + cow + '\n```'
-            );
         });
     }
 );
