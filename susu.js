@@ -218,7 +218,8 @@ controller.hears(
                     }
                 }
                 if (!found) {
-                    animal = 'default';
+                    let random = util.randomInt(0, cows.length);
+                    animal = cows[random];
                 }
                 const cow = cowsay.say({ text: text, f: animal });
                 bot.reply(
