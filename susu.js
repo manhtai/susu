@@ -211,7 +211,7 @@ controller.hears(
             if (!err) {
                 let found;
                 for (let cow of cows) {
-                    if (cow.indexOf(animal) > -1) {
+                    if (cow === animal || cow.indexOf(animal) === 5) {
                         found = true;
                         animal = cow;
                         break;
