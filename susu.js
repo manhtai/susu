@@ -211,8 +211,7 @@ controller.hears(
             if (!err) {
                 let found;
                 for (let cow of cows) {
-                    if (cow === animal ||
-                        cow.indexOf('cows/') === 0 && cow.indexOf(animal) === 5) {
+                    if (cow === animal || cow === `cows/${animal}.cow`) {
                         found = true;
                         animal = cow;
                         break;
