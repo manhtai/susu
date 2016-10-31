@@ -352,10 +352,10 @@ controller.hears(['^shutdown$'],
 
 // Ơ, for Thu Thaor
 controller.hears(
-    ['ơ'],
+    ['^ơ$'],
     'direct_message,direct_mention,mention,message_received',
     (bot, message) => {
-        bot.reply(message, 'Ơ');
+        bot.reply(message, message.text);
 });
 
 
