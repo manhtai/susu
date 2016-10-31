@@ -350,6 +350,15 @@ controller.hears(['^shutdown$'],
 });
 
 
+// Ơ, for Thu Thaor
+controller.hears(
+    ['ơ'],
+    'direct_message,direct_mention,mention,message_received',
+    (bot, message) => {
+        bot.reply(message, `Ơ ${cool()}`);
+});
+
+
 // Catch all
 controller.hears(
     ['.*'],
