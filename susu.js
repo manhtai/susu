@@ -355,7 +355,7 @@ controller.hears(
     ['ơ'],
     'direct_message,direct_mention,mention,message_received',
     (bot, message) => {
-        bot.reply(message, `Ơ ${cool()}`);
+        bot.reply(message, 'Ơ');
 });
 
 
