@@ -1,1 +1,1 @@
-worker: node susu.js
+web: node susu.js
