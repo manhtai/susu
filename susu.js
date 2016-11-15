@@ -19,7 +19,7 @@ controller.configureSlackApp(
 );
 
 
-var sb = controller.setupWebserver(config.port, function (err, webserver) {
+controller.setupWebserver(config.port, function (err, webserver) {
 
     webserver.get('/', (req, res) => { res.send('Hi, I am a bot!'); });
 
@@ -56,5 +56,3 @@ controller.on('rtm_close', () => {
 
 require('./chatter')(controller);
 require('./whoisin')(controller);
-
-sb.webserver.listen(config.port);
