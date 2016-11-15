@@ -111,6 +111,9 @@ module.exports = (controller) => {
     controller.on('interactive_message_callback', function(bot, message) {
         if (message.callback_id == 'yes_or_no_callback') {
             var orig = message.original_message;
+            var update = { text: 'Moved to bottom: ' + orig.text };
+            var del = { text: 'Deleted: ' + orig.text };
+            var fakeDel = { text: 'Oh you may not delete it! I\'ll move it to bottom.' };
             switch (message.actions[0].name) {
 
                 case 'answer':
@@ -172,10 +175,6 @@ module.exports = (controller) => {
                     break;
 
                 case 'recycle':
-                    var update = {
-                        text: 'Moved to bottom: ' + orig.text,
-                        delete_original: true
-                    };
                     bot.replyInteractive(message, update, (err) => {
                         if (err) {
                             handleError(err, bot, message);
@@ -186,10 +185,6 @@ module.exports = (controller) => {
                     break;
 
                 case 'delete':
-                    var del = {
-                        text: 'Deleted: ' + orig.text,
-                        delete_original: true
-                    };
                     if (message.user == config.BOT_BOSS)
                         bot.replyInteractive(message, del, (err) => {
                             if (err) {
@@ -197,7 +192,12 @@ module.exports = (controller) => {
                             }
                         });
                     else
-                        bot.replyPrivateDelayed(myMessage, {text: 'Oh you can\'t do it!'});
+                        bot.replyInteractive(message, fakeDel, (err) => {
+                            if (err) {
+                                handleError(err, bot, message);
+                            }
+                            bot.replyPublicDelayed(myMessage, orig);
+                        });
                     break;
 
                 default:
