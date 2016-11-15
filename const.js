@@ -1,9 +1,10 @@
 'use strict';
 
-const SLACK_API_TOKEN = process.env.SLACK_API_TOKEN;
-if (!SLACK_API_TOKEN) {
-    throw new Error('missing SLACK_API_TOKEN');
-}
+const clientId = process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
+const port = process.env.PORT || 8445;
+const verify_token = process.env.VERIFICATION_TOKEN;
+const api_token = process.env.API_TOKEN;
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost/susu_demo';
 const mongoStorage = require('botkit-storage-mongo')({mongoUri: mongoUri});
@@ -17,11 +18,15 @@ const DICTIONARY_API = process.env.DICTIONARY_API;
 
 
 module.exports = {
-    mongoStorage: mongoStorage,
-    SLACK_API_TOKEN: SLACK_API_TOKEN,
-    BOT_BOSS: BOT_BOSS,
-    GOOGLE_CX: GOOGLE_CX,
-    GOOGLE_API_KEY: GOOGLE_API_KEY,
-    WORDS_API: WORDS_API,
-    DICTIONARY_API: DICTIONARY_API
+    clientId,
+    clientSecret,
+    port,
+    verify_token,
+    mongoStorage,
+    BOT_BOSS,
+    GOOGLE_CX,
+    GOOGLE_API_KEY,
+    WORDS_API,
+    DICTIONARY_API,
+    api_token
 };

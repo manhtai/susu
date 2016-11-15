@@ -13,7 +13,7 @@
   "author": "manhtai",
   "license": "MIT",
   "dependencies": {
-    "botkit": "^0.2.2",
+    "botkit": "^0.4.1",
     "botkit-storage-mongo": "^1.0.4",
     "cool-ascii-faces": "^1.3.4",
     "cowsay": "^1.1.8",
