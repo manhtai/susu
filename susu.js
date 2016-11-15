@@ -32,24 +32,24 @@ controller.setupWebserver(config.port, function (err, webserver) {
 });
 
 
-const bot = controller.spawn({
-    token: config.api_token
-});
-
-
-bot.startRTM((err) => {
-    if (err) {
-        process.exit(1);
-    }
-});
-
-controller.on('rtm_close', () => {
-    bot.startRTM((err) => {
-        if (err) {
-            process.exit(1);
-        }
-    });
-});
-
-require('./chatter')(controller);
+//const bot = controller.spawn({
+//    token: config.api_token
+//});
+//
+//
+//bot.startRTM((err) => {
+//    if (err) {
+//        process.exit(1);
+//    }
+//});
+//
+//controller.on('rtm_close', () => {
+//    bot.startRTM((err) => {
+//        if (err) {
+//            process.exit(1);
+//        }
+//    });
+//});
+//
+//require('./chatter')(controller);
 require('./whoisin')(controller);
