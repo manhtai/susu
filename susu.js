@@ -20,9 +20,12 @@ controller.configureSlackApp(
 
 
 controller.setupWebserver(config.port, function (err, webserver) {
-    controller.createWebhookEndpoints(controller.webserver);
 
-    controller.createOauthEndpoints(controller.webserver, function (err, req, res) {
+    webserver.get('/', (req, res) => { res.send('Hi, I am a bot!'); });
+
+    controller.createWebhookEndpoints(webserver);
+
+    controller.createOauthEndpoints(webserver, function (err, req, res) {
         if (err) {
             res.status(500).send('ERROR: ' + err);
         } else {
@@ -32,24 +35,24 @@ controller.setupWebserver(config.port, function (err, webserver) {
 });
 
 
-//const bot = controller.spawn({
-//    token: config.api_token
-//});
-//
-//
-//bot.startRTM((err) => {
-//    if (err) {
-//        process.exit(1);
-//    }
-//});
-//
-//controller.on('rtm_close', () => {
-//    bot.startRTM((err) => {
-//        if (err) {
-//            process.exit(1);
-//        }
-//    });
-//});
-//
-//require('./chatter')(controller);
+const bot = controller.spawn({
+    token: config.api_token
+});
+
+
+bot.startRTM((err) => {
+    if (err) {
+        process.exit(1);
+    }
+});
+
+controller.on('rtm_close', () => {
+    bot.startRTM((err) => {
+        if (err) {
+            process.exit(1);
+        }
+    });
+});
+
+require('./chatter')(controller);
 require('./whoisin')(controller);
