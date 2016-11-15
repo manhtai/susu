@@ -173,7 +173,10 @@ module.exports = (controller) => {
                         delete_original: true
                     };
                     bot.replyInteractive(message, update, (err) => {
-                        console.log(err);
+                        if (err) {
+                            handleError(err, bot, message);
+                            return;
+                        }
                         bot.replyPublicDelayed(myMessage, orig);
                     });
                     break;
