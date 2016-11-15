@@ -74,7 +74,11 @@ module.exports = (controller) => {
 
                 let bottomActions = [{
                     name: 'recycle',
-                    text: ':arrow_down: kéo xuống',
+                    text: ':arrow_down:',
+                    type: 'button'
+                }, {
+                    name: 'delete',
+                    text: ':no_entry_sign:',
                     type: 'button'
                 }];
 
@@ -179,6 +183,21 @@ module.exports = (controller) => {
                         }
                         bot.replyPublicDelayed(myMessage, orig);
                     });
+                    break;
+
+                case 'delete':
+                    var del = {
+                        text: 'Deleted: ' + orig.text,
+                        delete_original: true
+                    };
+                    if (message.user == config.BOT_BOSS)
+                        bot.replyInteractive(message, del, (err) => {
+                            if (err) {
+                                handleError(err, bot, message);
+                            }
+                        });
+                    else
+                        bot.replyPrivateDelayed(myMessage, {text: 'Oh you can\'t do it!'});
                     break;
 
                 default:
