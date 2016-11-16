@@ -15,4 +15,4 @@ A Slack bot built with Botkit
 - pronounce
 - cowsay
 - saving quotes
-- ...
+- commands

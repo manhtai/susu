@@ -1,4 +1,6 @@
 'use strict';
+// Forked from Slapp version: https://github.com/BeepBoopHQ/in-or-out
+
 const config = require('./const');
 
 
