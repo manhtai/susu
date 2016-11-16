@@ -113,9 +113,18 @@ module.exports = (controller) => {
     controller.on('interactive_message_callback', function(bot, message) {
         if (message.callback_id == 'yes_or_no_callback') {
             var orig = message.original_message;
-            var update = { text: 'Moved to bottom: ' + orig.text };
-            var del = { text: 'Deleted: ' + orig.text };
-            var fakeDel = { text: 'Oh you may not delete me! I\'ll go to bottom for now.' };
+            var update = {
+                text: 'Moved to bottom: ' + orig.text,
+                delete_original: true
+            };
+            var del = {
+                text: 'Deleted: ' + orig.text,
+                delete_original: true
+            };
+            var fakeDel = {
+                text: 'Oh you may not delete me! I\'ll go to bottom for now.',
+                delete_original: true
+            };
             switch (message.actions[0].name) {
 
                 case 'answer':
