@@ -6,7 +6,7 @@ const config = require('./const');
 
 module.exports = (controller) => {
     var myMessage;
-    var now = Date.now();
+    var now = {};
     controller.on('slash_command', function(bot, message) {
         myMessage = message;  // replyPublicDelayed can't post to interactive message url so we have to hack this
         switch (message.command) {
@@ -123,10 +123,6 @@ module.exports = (controller) => {
                 text: 'Deleted: ' + orig.text,
                 delete_original: true
             };
-            var fakeDel = {
-                text: 'Oh you may not delete me! I\'ll go to bottom for now.',
-                delete_original: true
-            };
             switch (message.actions[0].name) {
 
                 case 'answer':
@@ -188,17 +184,18 @@ module.exports = (controller) => {
                     break;
 
                 case 'recycle':
-                    if (now > Date.now() - 5000) return;
+                    if (now[message.user] > Date.now() - 10000 || !myMessage) return;
 
-                    bot.replyInteractive(message, update, (err) => {
-                        now = Date.now();
-                        if (err) {
-                            handleError(err, bot, message);
-                            return;
+                    bot.replyPublicDelayed(myMessage, orig, (err) => {
+                        now[message.user] = Date.now();
+                        if (!err) {
+                            bot.replyInteractive(message, update, (err) => {
+                                if (err) {
+                                    handleError(err, bot, message);
+                                    return;
+                                }
+                            });
                         }
-                        bot.replyPublicDelayed(myMessage, orig, (err) => {
-                            if (err) bot.replyPublicDelayed(myMessage, orig);
-                        });
                     });
                     break;
 
