@@ -1,5 +1,7 @@
 'use strict';
 
+require('./newrelic');
+
 const Botkit = require('botkit');
 const config = require('./const');
 const express = require('express');
