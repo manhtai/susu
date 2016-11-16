@@ -114,6 +114,7 @@ module.exports = (controller) => {
     controller.on('interactive_message_callback', function(bot, message) {
         if (message.callback_id == 'yes_or_no_callback') {
             var orig = message.original_message;
+            if (!orig) return;
             var update = {
                 text: 'Moved to bottom: ' + orig.text,
                 delete_original: true
