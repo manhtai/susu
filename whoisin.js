@@ -29,13 +29,13 @@ module.exports = (controller) => {
                 // default actions incase the user doesn't specify one
                 var actions = [{
                     name: 'answer',
-                    text: 'Yes',
+                    text: 'Có',
                     type: 'button',
                     value: 'yes',
                     style: 'default'
                 }, {
                     name: 'answer',
-                    text: 'No',
+                    text: 'Không',
                     type: 'button',
                     value: 'no',
                     style: 'default'
@@ -65,7 +65,7 @@ module.exports = (controller) => {
                             text: '',
                             fallback: message.text,
                             callback_id: 'yes_or_no_callback',
-                            color: '#FF0000',
+                            color: '#FF749C',
                             actions: []
                         };
                     }
@@ -78,7 +78,7 @@ module.exports = (controller) => {
                     type: 'button'
                 }, {
                     name: 'delete',
-                    text: ':no_entry_sign:',
+                    text: ':arrows_counterclockwise:',
                     type: 'button'
                 }];
 
@@ -113,7 +113,7 @@ module.exports = (controller) => {
             var orig = message.original_message;
             var update = { text: 'Moved to bottom: ' + orig.text };
             var del = { text: 'Deleted: ' + orig.text };
-            var fakeDel = { text: 'Oh you may not delete it! I\'ll move it to bottom.' };
+            var fakeDel = { text: 'Oh you may not delete me! I\'ll go to bottom for now.' };
             switch (message.actions[0].name) {
 
                 case 'answer':
@@ -168,7 +168,7 @@ module.exports = (controller) => {
                         return {
                             text: l.string(),
                             mrkdwn_in: ["text"],
-                            color: '#47EEBC'
+                            color: '#00BABE'
                         };
                     }));
                     bot.replyInteractive(message, orig);
