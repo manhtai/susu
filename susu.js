@@ -22,9 +22,6 @@ controller.configureSlackApp(
     }
 );
 
-
-
-
 const bot = controller.spawn({
     token: config.api_token
 });
