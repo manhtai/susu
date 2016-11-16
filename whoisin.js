@@ -34,13 +34,13 @@ module.exports = (controller) => {
                     name: 'answer',
                     text: 'Có',
                     type: 'button',
-                    value: 'yes',
+                    value: 'Có',
                     style: 'default'
                 }, {
                     name: 'answer',
                     text: 'Không',
                     type: 'button',
-                    value: 'no',
+                    value: 'Không',
                     style: 'default'
                 }];
 
