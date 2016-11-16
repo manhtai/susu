@@ -195,26 +195,18 @@ module.exports = (controller) => {
                             handleError(err, bot, message);
                             return;
                         }
-                        bot.replyPublicDelayed(myMessage, orig);
+                        bot.replyPublicDelayed(myMessage, orig, (err) => {
+                            if (err) bot.replyPublicDelayed(myMessage, orig);
+                        });
                     });
                     break;
 
                 case 'delete':
-                    if (now > Date.now() - 5000) return;
-
                     if (message.user == config.BOT_BOSS)
                         bot.replyInteractive(message, del, (err) => {
                             if (err) {
                                 handleError(err, bot, message);
                             }
-                        });
-                    else
-                        bot.replyInteractive(message, fakeDel, (err) => {
-                            now = Date.now();
-                            if (err) {
-                                handleError(err, bot, message);
-                            }
-                            bot.replyPublicDelayed(myMessage, orig);
                         });
                     break;
 
