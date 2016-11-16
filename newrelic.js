@@ -6,7 +6,7 @@
  * See lib/config.defaults.js in the agent distribution for a more complete
  * description of configuration variables and their potential values.
  */
-const config = require('./const');
+const conf = require('./const');
 
 exports.config = {
   /**
@@ -16,7 +16,7 @@ exports.config = {
   /**
    * Your New Relic license key.
    */
-  license_key: config.NEWRELIC_KEY,
+  license_key: conf.NEWRELIC_KEY,
   logging: {
     /**
      * Level at which to log. 'trace' is most useful to New Relic when diagnosing
