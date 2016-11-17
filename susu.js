@@ -10,9 +10,9 @@ const RateLimit = require('express-rate-limit');
 
 
 const limiter = new RateLimit({
-  windowMs: 1000, // 1 second
-  max: 5, // 5 requests/s
-  delayMs: 200 // 200 ms delay each request
+  windowMs: 5000, // 1 second
+  max: 1, // 1 request/5s
+  delayMs: 1000 // 1000s delay each request
 });
 
 const controller = Botkit.slackbot({
