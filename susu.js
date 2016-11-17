@@ -6,6 +6,14 @@ const Botkit = require('botkit');
 const config = require('./const');
 const express = require('express');
 const bodyParser = require('body-parser');
+const RateLimit = require('express-rate-limit');
+
+
+const limiter = new RateLimit({
+  windowMs: 1000, // 1 second
+  max: 5, // 5 requests/s
+  delayMs: 200 // 200 ms delay each request
+});
 
 const controller = Botkit.slackbot({
     storage: config.mongoStorage,
@@ -48,12 +56,16 @@ require('./whoisin')(controller);
 // Setup server
 var static_dir =  __dirname + '/public';
 var webserver = express();
+
+webserver.enable('trust proxy'); // For using with Heroku
+webserver.use(limiter);
 webserver.use(bodyParser.json());
 webserver.use(bodyParser.urlencoded({ extended: true }));
 webserver.use(express.static(static_dir));
 
 webserver.get('/', (req, res) => { res.send('Hi, I am a bot!'); });
 
+// Attach webserver to controller
 controller.webserver = webserver;
 controller.config.port = config.port;
 
