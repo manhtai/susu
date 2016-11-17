@@ -21,8 +21,11 @@ module.exports = (controller) => {
                 } else if (message.text === 'restore') {
                     // Restore latest saved message from storage
                     controller.storage.channels.get(message.channel, (err, channelData) => {
-                        if (!err && channelData && channelData.original_message)
+                        if (!err && channelData && channelData.original_message &&
+                            message.user === config.BOT_BOSS)
                             bot.replyPublic(message, channelData.original_message);
+                        else
+                            bot.replyPrivate(message, 'What are you doing, kid?');
                     });
                 } else {
                     // Create new message
