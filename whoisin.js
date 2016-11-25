@@ -1,7 +1,32 @@
 'use strict';
 // Forked from Slapp version: https://github.com/BeepBoopHQ/in-or-out
-
+const request = require('request');
 const config = require('./const');
+
+// I want to call back on all (err, resp, body) so I rewrite it
+var myReplyPublicDelayed = function(src, resp, cb) {
+    if (!src.response_url) {
+        cb && cb('No response_url found');
+    } else {
+        var msg = {};
+
+        if (typeof(resp) == 'string') {
+            msg.text = resp;
+        } else {
+            msg = resp;
+        }
+
+        msg.channel = src.channel;
+
+        msg.response_type = 'in_channel';
+        var requestOptions = {
+            uri: src.response_url,
+            method: 'POST',
+            json: msg
+        };
+        request(requestOptions, cb);
+    }
+};
 
 
 module.exports = (controller) => {
@@ -196,21 +221,21 @@ module.exports = (controller) => {
                 case 'recycle':
 
                     if (!myMessage) return;
-                    bot.replyPublicDelayed(myMessage, orig, (err) => {
-                        if (!err)
-                            controller.storage.channels.save(lassMessage);
+                    myReplyPublicDelayed(myMessage, orig, (err, resp, body) => {
+                        if (!err && typeof(body) === 'string' && body === 'ok') {
                             bot.replyInteractive(message, update, (err) => {
                                 if (err) {
                                     handleError(err, bot, message);
                                 }
                             });
+                        }
                     });
                     break;
 
                 case 'delete':
                     if (message.user === config.BOT_BOSS) {
-                        controller.storage.channels.save(lassMessage);
                         bot.replyInteractive(message, del, (err) => {
+                            controller.storage.channels.save(lassMessage);
                             if (err) {
                                 handleError(err, bot, message);
                             }
