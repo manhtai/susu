@@ -17,7 +17,7 @@ function isSame (w1, w2) {
 }
 
 module.exports = {
-  randomInt: randomInt,
-  formatQuote: formatQuote,
-  isSame: isSame
+  randomInt,
+  formatQuote,
+  isSame
 };

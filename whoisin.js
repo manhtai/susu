@@ -1,12 +1,14 @@
 'use strict';
 // Forked from Slapp version: https://github.com/BeepBoopHQ/in-or-out
+
 const request = require('request');
-const config = require('./const');
+const config  = require('./const');
+const meme    = require('./meme');
 
 // I want to call back on all (err, resp, body) so I rewrite it
-var myReplyPublicDelayed = function(src, resp, cb) {
+function myReplyPublicDelayed(src, resp, cb) {
     if (!src.response_url) {
-        cb && cb('No response_url found');
+        if (cb) cb('No response_url found');
     } else {
         var msg = {};
 
@@ -26,18 +28,17 @@ var myReplyPublicDelayed = function(src, resp, cb) {
         };
         request(requestOptions, cb);
     }
-};
+}
 
 
 module.exports = (controller) => {
     var myMessage;
     controller.on('slash_command', function(bot, message) {
-        myMessage = message;  // replyPublicDelayed can't post to interactive message url so we have to hack this
+        if (message.token !== config.verify_token) return; // Verify it
+        myMessage = message;  // replyPublicDelayed can't post to interactive message url
         switch (message.command) {
 
             case '/ahem':
-                // Verify it
-                if (message.token !== config.verify_token) return;
 
                 if (message.text === '' || message.text === 'help') {
                     // Display invisible help
@@ -93,7 +94,7 @@ module.exports = (controller) => {
 
                     // split the buttons into blocks of five if there are that many different
                     // questions
-                    var attachments = [];
+                    let attachments = [];
                     actions.forEach((action, num) => {
                         let idx = Math.floor(num / 5);
                         if (!attachments[idx]) {
@@ -135,6 +136,40 @@ module.exports = (controller) => {
                         }
                     });
 
+                }
+
+                break;
+
+            case '/meme':
+                if (message.text === '' || message.text === 'help') {
+                    bot.replyPrivate(message, 'Post a meme: /meme template_name | top_row | bottom_row\nList meme templates: /meme list'
+                    );
+                } else if (message.text === 'list') {
+                    meme.getMemeTemplates((err, list, templates) => {
+                        let helpText = '';
+                        for (let key in templates) {
+                            helpText += `$\`{key}\`: ${templates[key]}\n`;
+                        }
+                        bot.replyPrivate(message, helpText);
+                    });
+                } else {
+                    let lines = message.text.split('|').map(it => it.trim());
+                    let [template, top, bottom] = lines;
+                    [top, bottom] = [top, bottom].map(x => x && x.split(' ').join('_'));
+                    meme.getMemeTemplates((err, list) => {
+                        if (!err && list) {
+                            if (list.indexOf(template) > -1) {
+                                let meme_url = meme.buildUrl(template, top, bottom);
+                                let attachments = [{
+                                    image_url: meme_url,
+                                    fallback: [top, bottom].join(' | ')
+                                }];
+                                bot.replyPublic(message, {
+                                    attachments: attachments
+                                });
+                            }
+                        }
+                    });
                 }
 
                 break;
