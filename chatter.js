@@ -375,7 +375,7 @@ module.exports = (controller) => {
             let user = message.match[1].trim();
             controller.storage.users.get(user, (err, member) => {
                 if (!err) {
-                    bot.reply(message, `${member.profile.real_name}'s email address is \`${member.profile.email}\` ${cool()}`);
+                    bot.reply(message, `${member.profile.real_name || user}'s email address is \`${member.profile.email}\` ${cool()}`);
                 } else {
                     bot.reply(message, 'I do not know her!');
                 }
