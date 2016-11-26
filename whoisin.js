@@ -68,13 +68,13 @@ module.exports = (controller) => {
                         text: 'Có',
                         type: 'button',
                         value: 'Có',
-                        style: 'default'
+                        style: 'primary'
                     }, {
                         name: 'answer',
                         text: 'Không',
                         type: 'button',
                         value: 'Không',
-                        style: 'default'
+                        style: 'danger'
                     }];
 
                     if (lines.length > 1) {
