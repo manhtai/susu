@@ -161,9 +161,9 @@ module.exports = (controller) => {
                     [top, bottom] = [top, bottom].map(x => x && x.split(' ').join('_'));
                     meme.getMemeTemplates((err, list) => {
                         if (!err && list) {
-                            if (lines.length === 1 && list.indexOf(template) == -1) {
+                            if (list.indexOf(template) == -1) {
                                 let random = util.randomInt(0, list.length);
-                                top = template;
+                                if (lines.length === 1) top = template;
                                 template = list[random];
                             }
                             let meme_url = meme.buildUrl(template, top, bottom);
