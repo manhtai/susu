@@ -146,11 +146,12 @@ module.exports = (controller) => {
                     );
                 } else if (message.text === 'list') {
                     meme.getMemeTemplates((err, list, templates) => {
-                        let helpText = '';
+                        let helpText = [];
                         for (let key in templates) {
-                            helpText += `\`${key}\`: ${templates[key]}\n`;
+                            helpText.push(`\`${key}\`: ${templates[key]}`);
                         }
-                        bot.replyPrivate(message, helpText);
+                        helpText.sort();
+                        bot.replyPrivate(message, helpText.join('\n'));
                     });
                 } else {
                     let lines = message.text.split('|').map(it => it.trim());
