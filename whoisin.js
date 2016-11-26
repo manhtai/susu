@@ -148,7 +148,7 @@ module.exports = (controller) => {
                     meme.getMemeTemplates((err, list, templates) => {
                         let helpText = '';
                         for (let key in templates) {
-                            helpText += `$\`{key}\`: ${templates[key]}\n`;
+                            helpText += `\`${key}\`: ${templates[key]}\n`;
                         }
                         bot.replyPrivate(message, helpText);
                     });
