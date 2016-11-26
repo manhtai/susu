@@ -358,7 +358,7 @@ module.exports = (controller) => {
         (bot, message) => {
             let user = message.match[1].trim();
             controller.storage.users.get(user, (err, member) => {
-                if (!err) {
+                if (!err && member && member.profile) {
                     bot.reply(message, `\`\`\`${JSON.stringify(member, null, 4)}\`\`\``);
                 } else {
                     bot.reply(message, 'I do not know her!');
@@ -374,7 +374,7 @@ module.exports = (controller) => {
         (bot, message) => {
             let user = message.match[1].trim();
             controller.storage.users.get(user, (err, member) => {
-                if (!err) {
+                if (!err && member && member.profile) {
                     bot.reply(message, `${member.profile.real_name || user}'s email address is \`${member.profile.email}\` ${cool()}`);
                 } else {
                     bot.reply(message, 'I do not know her!');
