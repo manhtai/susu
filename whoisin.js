@@ -74,7 +74,7 @@ module.exports = (controller) => {
                         text: 'Không',
                         type: 'button',
                         value: 'Không',
-                        style: 'danger'
+                        style: 'default'
                     }];
 
                     if (lines.length > 1) {
