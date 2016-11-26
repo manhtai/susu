@@ -4,6 +4,8 @@
 const request = require('request');
 const config  = require('./const');
 const meme    = require('./meme');
+const util    = require('./util');
+
 
 // I want to call back on all (err, resp, body) so I rewrite it
 function myReplyPublicDelayed(src, resp, cb) {
@@ -159,16 +161,19 @@ module.exports = (controller) => {
                     [top, bottom] = [top, bottom].map(x => x && x.split(' ').join('_'));
                     meme.getMemeTemplates((err, list) => {
                         if (!err && list) {
-                            if (list.indexOf(template) > -1) {
-                                let meme_url = meme.buildUrl(template, top, bottom);
-                                let attachments = [{
-                                    image_url: meme_url,
-                                    fallback: [top, bottom].join(' | ')
-                                }];
-                                bot.replyPublic(message, {
-                                    attachments: attachments
-                                });
+                            if (lines.length === 1 && list.indexOf(template) == -1) {
+                                let random = util.randomInt(0, list.length);
+                                top = template;
+                                template = list[random];
                             }
+                            let meme_url = meme.buildUrl(template, top, bottom);
+                            let attachments = [{
+                                image_url: meme_url,
+                                fallback: [top, bottom].join(' | ')
+                            }];
+                            bot.replyPublic(message, {
+                                attachments: attachments
+                            });
                         }
                     });
                 }
