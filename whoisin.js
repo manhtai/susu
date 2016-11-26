@@ -174,7 +174,7 @@ module.exports = (controller) => {
                                         return Promise.resolve(
                                             controller.storage.users.get(member, (err, user) => {
                                                 if (!err && user && user.profile) {
-                                                    alt = user.profile.image_192;
+                                                    alt = user.profile.image_512;
                                                     template = "custom";
                                                     resolve(template);
                                                     return;
