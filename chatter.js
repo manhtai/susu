@@ -330,6 +330,58 @@ module.exports = (controller) => {
             bot.reply(message, message.text);
     });
 
+    // Save user info
+    controller.hears(
+        ['update users'],
+        'direct_message,direct_mention,mention,message_received',
+        (bot, message) => {
+            bot.api.users.list({token: config.api_token},
+                (err, response) => {
+                    if (!err) {
+                        response.members.map((member) => {
+                            member.uid = member.id;
+                            member.id = member.name;
+                            controller.storage.users.save(member);
+                        });
+                        bot.reply(message, 'Update success!');
+                    } else {
+                        bot.reply(message, 'Update fail!');
+                    }
+            });
+        }
+    );
+
+    // Get user info
+    controller.hears(
+        ['get info (.*)'],
+        'direct_message,direct_mention,mention,message_received',
+        (bot, message) => {
+            let user = message.match[1].trim();
+            controller.storage.users.get(user, (err, member) => {
+                if (!err) {
+                    bot.reply(message, `\`\`\`${JSON.stringify(member, null, 4)}\`\`\``);
+                } else {
+                    bot.reply(message, 'I do not know her!');
+                }
+            });
+        }
+    );
+
+    // Get user email
+    controller.hears(
+        ['get email (.*)'],
+        'direct_message,direct_mention,mention,message_received',
+        (bot, message) => {
+            let user = message.match[1].trim();
+            controller.storage.users.get(user, (err, member) => {
+                if (!err) {
+                    bot.reply(message, `${member.profile.real_name}'s email address is \`${member.profile.email}\` ${cool()}`);
+                } else {
+                    bot.reply(message, 'I do not know her!');
+                }
+            });
+        }
+    );
 
     // Catch all
     controller.hears(

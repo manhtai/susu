@@ -159,28 +159,51 @@ module.exports = (controller) => {
                     let lines = message.text.split('|').map(it => it.trim());
                     let [template, top, bottom] = lines;
                     [top, bottom] = [top, bottom].map(x => x && x.split(' ').join('_'));
-                    meme.getMemeTemplates((err, list) => {
-                        if (!err && list) {
-                            let alt;
-                            if (list.indexOf(template) === -1) {
-                                if (template.indexOf('http') === 0) {
-                                    alt = template;
-                                    template = "custom";
-                                } else {
-                                    let random = util.randomInt(0, list.length);
-                                    if (lines.length === 1) top = template;
-                                    template = list[random];
+                    let alt;
+                    const templatePromise = new Promise(function(resolve, reject) {
+                        meme.getMemeTemplates((err, list) => {
+                            if (!err && list) {
+                                if (list.indexOf(template) === -1) {
+                                    if (template.indexOf('http') === 0) {
+                                        alt = template;
+                                        template = "custom";
+                                        resolve(template);
+                                        return;
+                                    } else if (template.indexOf('@') === 0) {
+                                        let member = template.slice(1);
+                                        return Promise.resolve(
+                                            controller.storage.users.get(member, (err, user) => {
+                                                if (!err && user && user.profile) {
+                                                    alt = user.profile.image_192;
+                                                    template = "custom";
+                                                    resolve(template);
+                                                    return;
+                                                }
+                                            })
+                                        );
+                                    } else {
+                                        let random = util.randomInt(0, list.length);
+                                        if (lines.length === 1) top = template;
+                                        template = list[random];
+                                        resolve(template);
+                                        return;
+                                    }
                                 }
                             }
-                            let meme_url = meme.buildUrl(template, top, bottom, alt);
-                            let attachments = [{
-                                image_url: meme_url,
-                                fallback: [top, bottom].join(' | ')
-                            }];
-                            bot.replyPublic(message, {
-                                attachments: attachments
-                            });
-                        }
+                            reject();
+                        });
+                    });
+                    templatePromise.then((template) => {
+                        let meme_url = meme.buildUrl(template, top, bottom, alt);
+                        let attachments = [{
+                            image_url: meme_url,
+                            fallback: [top, bottom].join(' | ')
+                        }];
+                        bot.replyPublic(message, {
+                            attachments: attachments
+                        });
+                    }).catch(() => {
+                        bot.replyPrivate(message, 'Something went wrong!');
                     });
                 }
 
