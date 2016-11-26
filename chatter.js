@@ -385,7 +385,7 @@ module.exports = (controller) => {
 
     // Catch all
     controller.hears(
-        ['.*'],
+        ['help'],
         'direct_message,direct_mention,mention',
         (bot, message) => {
             bot.api.reactions.add({
@@ -398,12 +398,12 @@ module.exports = (controller) => {
                 }
             });
             if (message.user == config.BOT_BOSS) {
-                bot.reply(message, "Hello, boss!");
+                bot.reply(message, "Hello, boss, you forget something? Just read your code again!");
             } else {
                 bot.reply(
                     message,
                     cool() + " hi there!\n" +
-                    "I can help you to `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` me and much more to come!");
+                    "Try command me by `/ahem`, `/meme`, or tag me with `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` to see how powerful I am!");
             }
         }
     );
