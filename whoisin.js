@@ -161,12 +161,18 @@ module.exports = (controller) => {
                     [top, bottom] = [top, bottom].map(x => x && x.split(' ').join('_'));
                     meme.getMemeTemplates((err, list) => {
                         if (!err && list) {
-                            if (list.indexOf(template) == -1) {
-                                let random = util.randomInt(0, list.length);
-                                if (lines.length === 1) top = template;
-                                template = list[random];
+                            let alt;
+                            if (list.indexOf(template) === -1) {
+                                if (template.indexOf('http') === 0) {
+                                    alt = template;
+                                    template = "custom";
+                                } else {
+                                    let random = util.randomInt(0, list.length);
+                                    if (lines.length === 1) top = template;
+                                    template = list[random];
+                                }
                             }
-                            let meme_url = meme.buildUrl(template, top, bottom);
+                            let meme_url = meme.buildUrl(template, top, bottom, alt);
                             let attachments = [{
                                 image_url: meme_url,
                                 fallback: [top, bottom].join(' | ')

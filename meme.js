@@ -24,8 +24,9 @@ function getMemeTemplates(callback) {
 }
 
 
-function buildUrl(template, top, bottom) {
-    return `${MEME}/${template}/${top || '_'}/${bottom || '_'}.jpg`;
+function buildUrl(template, top, bottom, alt) {
+    return alt ? `${MEME}/${template}/${top || '_'}/${bottom || '_'}.jpg?alt=${alt}` :
+        `${MEME}/${template}/${top || '_'}/${bottom || '_'}.jpg`;
 }
 
 
