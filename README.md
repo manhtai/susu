@@ -1,6 +1,8 @@
 A Slack bot built with Botkit
 -----------------------------
 
+<img src="https://raw.githubusercontent.com/manhtai/susu/master/susu.gif" alt="susu"/>
+
 
 ## Setup
 
