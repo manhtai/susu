@@ -34,14 +34,12 @@ function myReplyPublicDelayed(src, resp, cb) {
 
 
 module.exports = (controller) => {
-    var myMessage;
     controller.on('slash_command', function(bot, message) {
         if (message.token !== config.verify_token) return; // Verify it
-        myMessage = message;  // replyPublicDelayed can't post to interactive message url
+
         switch (message.command) {
 
             case '/ahem':
-
                 if (message.text === '' || message.text === 'help') {
                     // Display invisible help
                     bot.replyPrivate(message, 'Usage: "Will you marry me? <3 | Yes | No | What?"');
@@ -289,12 +287,23 @@ module.exports = (controller) => {
                     break;
 
                 case 'recycle':
-
-                    if (!myMessage) return;
-                    myReplyPublicDelayed(myMessage, orig, (err, resp, body) => {
-                        if (!err && typeof(body) === 'string' && body === 'ok') {
-                            bot.replyInteractive(message, update, (err) => {
-                                if (err) {
+                    let myMessage = {
+                        text: orig.text,
+                        attachments: orig.attachments,
+                        channel: message.channel,
+                        username: 'susu' // FIXME: Should set as_user = false
+                    };
+                    controller.storage.users.get(config.BOT_BOSS, (err, user) => {
+                        if (!err && user && user.access_token) {
+                            bot.config.token = user.access_token;
+                            bot.send(myMessage, (err, resp, body) => {
+                                if (!err) {
+                                    bot.replyInteractive(message, update, (err) => {
+                                        if (err) {
+                                            handleError(err, bot, message);
+                                        }
+                                    });
+                                } else {
                                     handleError(err, bot, message);
                                 }
                             });
