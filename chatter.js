@@ -370,7 +370,7 @@ module.exports = (controller) => {
     // Get user email
     controller.hears(
         ['get email (.*)'],
-        'direct_message,direct_mention,mention,message_received',
+        'direct_message,direct_mention,mention',
         (bot, message) => {
             let user = message.match[1].trim();
             controller.storage.users.get(user, (err, member) => {

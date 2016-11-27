@@ -158,7 +158,7 @@ module.exports = (controller) => {
                 } else {
                     let lines = message.text.split('|').map(it => it.trim());
                     let [template, top, bottom] = lines;
-                    [top, bottom] = [top, bottom].map(x => x && x.split(' ').join('_'));
+                    [top, bottom] = [top, bottom].map(x => x && encodeURIComponent(x.split(' ').join('_')));
                     let alt;
                     const templatePromise = new Promise(function(resolve, reject) {
                         meme.getMemeTemplates((err, list) => {
