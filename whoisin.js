@@ -296,7 +296,7 @@ module.exports = (controller) => {
                     controller.storage.users.get(config.BOT_BOSS, (err, user) => {
                         if (!err && user && user.access_token) {
                             bot.config.token = user.access_token;
-                            bot.send(myMessage, (err, resp, body) => {
+                            bot.send(myMessage, (err, res) => {
                                 if (!err) {
                                     bot.replyInteractive(message, update, (err) => {
                                         if (err) {
