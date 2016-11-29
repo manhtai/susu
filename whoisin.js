@@ -186,6 +186,9 @@ module.exports = (controller) => {
                                         resolve(template);
                                         return;
                                     }
+                                } else {
+                                    resolve(template);
+                                    return;
                                 }
                             }
                             reject();
