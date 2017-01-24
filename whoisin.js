@@ -40,6 +40,7 @@ module.exports = (controller) => {
         switch (message.command) {
 
             case '/ahem':
+                console.log("test");
                 if (message.text === '' || message.text === 'help') {
                     // Display invisible help
                     bot.replyPrivate(message, 'Usage: "Will you marry me? <3 | Yes | No | What?"');
