@@ -378,7 +378,7 @@ class AttachmentLine {
 
     remove(entry) {
         this.entries = this.entries.filter((val) => {
-            return val !== entry;
+            return val && val !== entry;
         });
         return this;
     }
