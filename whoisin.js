@@ -368,8 +368,12 @@ class AttachmentLine {
     }
 
     add(entry) {
-        this.remove(entry);
-        this.entries.push(entry);
+        if (this.entries.indexOf(entry) > -1) {
+            this.remove(entry);
+        } else {
+            this.remove(entry);
+            this.entries.push(entry);
+        }
         return this;
     }
 

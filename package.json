@@ -13,16 +13,16 @@
   "author": "manhtai",
   "license": "MIT",
   "dependencies": {
-    "botkit": "^0.4.1",
-    "botkit-storage-mongo": "^1.0.4",
-    "cool-ascii-faces": "^1.3.4",
-    "cowsay": "^1.1.8",
-    "express-rate-limit": "^2.5.0",
-    "googleapis": "^12.3.0",
-    "newrelic": "^1.34.0",
-    "node-wit": "^4.0.0",
-    "request": "^2.74.0",
-    "xml2js": "^0.4.17"
+    "botkit": "0.4.1",
+    "botkit-storage-mongo": "1.0.4",
+    "cool-ascii-faces": "1.3.4",
+    "cowsay": "1.1.8",
+    "express-rate-limit": "2.5.0",
+    "googleapis": "12.3.0",
+    "newrelic": "1.34.0",
+    "node-wit": "4.0.0",
+    "request": "2.74.0",
+    "xml2js": "0.4.17"
   },
   "engines": {
     "node": "6.1.0"
