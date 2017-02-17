@@ -256,12 +256,11 @@ module.exports = (controller) => {
                         if (line.answer === value) {
                             foundExistingLine = true;
                             line.add(username);
-                            lines.push(line);
                         } else {
                             line.remove(username);
-                            if (line.count() > 0) {
-                                lines.push(line);
-                            }
+                        }
+                        if (line.count() > 0) {
+                            lines.push(line);
                         }
                     }
 
