@@ -216,7 +216,7 @@ module.exports = (controller) => {
                 try {
                     result = safeEval(result);
                 } catch(e){}
-                bot.replyPrivate(message, result);
+                bot.replyPublic(message, `${message.text} = ${result}`);
 
                 break;
 
