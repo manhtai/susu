@@ -1,10 +1,11 @@
 'use strict';
 // Forked from Slapp version: https://github.com/BeepBoopHQ/in-or-out
 
-const request = require('request');
-const config  = require('./const');
-const meme    = require('./meme');
-const util    = require('./util');
+const request  = require('request');
+const safeEval = require('safe-eval');
+const config   = require('./const');
+const meme     = require('./meme');
+const util     = require('./util');
 
 
 // I want to call back on all (err, resp, body) so I rewrite it
@@ -207,6 +208,15 @@ module.exports = (controller) => {
                         bot.replyPrivate(message, 'Something went wrong!');
                     });
                 }
+
+                break;
+
+            case '/tinh':
+                let result = message.text;
+                try {
+                    result = safeEval(result);
+                } catch(e){}
+                bot.replyPrivate(message, result);
 
                 break;
 
