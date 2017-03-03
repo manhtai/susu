@@ -230,7 +230,7 @@ module.exports = (controller) => {
                 }
 
                 try {
-                    t = t.strip();
+                    t = t.trim();
                     t = t ? t + ' ': '';
                     r = t.repeat(n);
                 } catch(e){}
