@@ -224,6 +224,11 @@ module.exports = (controller) => {
                 let r = message.text;
                 let [t, n] = message.text.split('|');
                 n = n || 7;
+
+                if (message.user !== config.BOT_BOSS) {
+                    n = Math.min(n, 50);
+                }
+
                 try {
                     r = t.repeat(n);
                 } catch(e){}
