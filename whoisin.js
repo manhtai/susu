@@ -221,12 +221,13 @@ module.exports = (controller) => {
                 break;
 
             case '/lap':
-                let [message, n] = message.text.split('|');
+                let r = message.text;
+                let [t, n] = message.text.split('|');
                 n = n || 7;
                 try {
-                    result = message.repeat(n);
+                    r = t.repeat(n);
                 } catch(e){}
-                bot.replyPublic(message, result);
+                bot.replyPublic(message, r);
 
                 break;
 
