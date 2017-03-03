@@ -220,6 +220,16 @@ module.exports = (controller) => {
 
                 break;
 
+            case '/lap':
+                let [message, n] = message.text.split('|');
+                n = n || 7;
+                try {
+                    result = message.repeat(n);
+                } catch(e){}
+                bot.replyPublic(message, result);
+
+                break;
+
             default:
                 bot.replyPublic(message, 'I\'m afraid I don\'t know how to ' + message.command + ' yet.');
 
