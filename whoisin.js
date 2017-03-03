@@ -230,6 +230,8 @@ module.exports = (controller) => {
                 }
 
                 try {
+                    t = t.strip();
+                    t = t ? t + ' ': '';
                     r = t.repeat(n);
                 } catch(e){}
                 bot.replyPublic(message, r);
