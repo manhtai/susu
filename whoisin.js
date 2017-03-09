@@ -222,7 +222,7 @@ module.exports = (controller) => {
 
             case '/lap':
                 let r = message.text;
-                let [t, n] = message.text.split('|');
+                let [t, n, s] = message.text.split('|').map(x => (x ? x.trim() : x));
                 n = n || 7;
 
                 if (message.user !== config.BOT_BOSS) {
@@ -231,6 +231,7 @@ module.exports = (controller) => {
 
                 try {
                     t = t.trim();
+                    t += s == 'n' ? '\n' : '';
                     t = t ? t + ' ': '';
                     r = t.repeat(n);
                 } catch(e){}
