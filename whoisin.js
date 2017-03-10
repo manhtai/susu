@@ -226,7 +226,7 @@ module.exports = (controller) => {
                 n = n || 7;
 
                 if (message.user !== config.BOT_BOSS) {
-                    n = Math.min(n, 50);
+                    n = Math.min(n, 10);
                 }
 
                 try {
