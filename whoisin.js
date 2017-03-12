@@ -41,6 +41,7 @@ module.exports = (controller) => {
         switch (message.command) {
 
             case '/ahem':
+            case '/ahemm':
                 if (message.text === '' || message.text === 'help') {
                     // Display invisible help
                     bot.replyPrivate(message, 'Usage: "Will you marry me? <3 | Yes | No | What?"');
@@ -54,6 +55,8 @@ module.exports = (controller) => {
                             bot.replyPrivate(message, 'What are you doing, kid?');
                     });
                 } else {
+                    var yes_or_no_callback = message.command == '/ahem' ?
+                        'yes_or_no_callback' : 'yes_or_no_callback_m';
                     // Create new message
                     var lines = message.text.split('|').map(it => it.trim());
                     var text = lines[0];
@@ -102,7 +105,7 @@ module.exports = (controller) => {
                             attachments[idx] = {
                                 text: '',
                                 fallback: message.text,
-                                callback_id: 'yes_or_no_callback',
+                                callback_id: yes_or_no_callback,
                                 color: '#FF749C',
                                 actions: []
                             };
@@ -124,7 +127,7 @@ module.exports = (controller) => {
                     attachments.push({
                         text: '',
                         fallback: 'move to the bottom',
-                        callback_id: 'yes_or_no_callback',
+                        callback_id: yes_or_no_callback,
                         actions: bottomActions
                     });
 
@@ -246,7 +249,7 @@ module.exports = (controller) => {
     });
 
     controller.on('interactive_message_callback', function(bot, message) {
-        if (message.callback_id == 'yes_or_no_callback') {
+        if (message.callback_id.indexOf('yes_or_no_callback') === 0) {
             var orig = message.original_message;
             if (!orig) return;
             var lassMessage = {id: message.channel, original_message: orig};
@@ -285,7 +288,7 @@ module.exports = (controller) => {
                         if (line.answer === value) {
                             foundExistingLine = true;
                             line.add(username);
-                        } else {
+                        } else if (message.callback_id == 'yes_or_no_callback') {
                             line.remove(username);
                         }
                         if (line.count() > 0) {
