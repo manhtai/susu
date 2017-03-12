@@ -398,12 +398,14 @@ module.exports = (controller) => {
                 }
             });
             if (message.user == config.BOT_BOSS) {
-                bot.reply(message, "Hello, boss, you forget something? Just read your code again!");
-            } else {
+                bot.reply(message, "Hello, boss, you forgot something? Just read your code again here https://github.com/manhtai/susu!");
+            } else if (Math.random() < 0.4) {
                 bot.reply(
                     message,
                     cool() + " hi there!\n" +
-                    "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` to see how powerful I am!");
+                    "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` to see how powerful I am!\n" +
+                    "My soul is in https://github.com/manhtai/susu, feel free to read through!"
+                );
             }
         }
     );
