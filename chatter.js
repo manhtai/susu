@@ -385,7 +385,7 @@ module.exports = (controller) => {
 
     // Catch all
     controller.hears(
-        ['*'],
+        ['.*'],
         'direct_message,direct_mention,mention',
         (bot, message) => {
             bot.api.reactions.add({
