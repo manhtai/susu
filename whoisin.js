@@ -231,11 +231,12 @@ module.exports = (controller) => {
                 if (message.user !== config.BOT_BOSS) {
                     n = Math.min(n, 10);
                 }
+                n = Math.max(1, n);
 
                 try {
                     t = t.trim();
-                    t += s == 'n' ? '\n' : '';
-                    t = t ? t + ' ': '';
+                    t += s == 'n' ? '\n' :
+                        s ? s : ' ';
                     r = t.repeat(n);
                 } catch(e){}
                 bot.replyPublic(message, r);
