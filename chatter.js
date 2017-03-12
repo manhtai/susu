@@ -385,7 +385,7 @@ module.exports = (controller) => {
 
     // Catch all
     controller.hears(
-        ['help'],
+        ['*'],
         'direct_message,direct_mention,mention',
         (bot, message) => {
             bot.api.reactions.add({
@@ -403,7 +403,7 @@ module.exports = (controller) => {
                 bot.reply(
                     message,
                     cool() + " hi there!\n" +
-                    "Try command me by `/ahem`, `/meme`, or tag me with `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` to see how powerful I am!");
+                    "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` to see how powerful I am!");
             }
         }
     );
