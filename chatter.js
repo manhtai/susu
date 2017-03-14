@@ -397,9 +397,7 @@ module.exports = (controller) => {
                     bot.botkit.log('Failed to add emoji reaction :(', err);
                 }
             });
-            if (message.user == config.BOT_BOSS) {
-                bot.reply(message, "Hello, boss, you forgot something? Just read your code again here https://github.com/manhtai/susu!");
-            } else if (Math.random() < 0.4) {
+            if (message.user != config.BOT_BOSS && Math.random() < 0.4) {
                 bot.reply(
                     message,
                     cool() + " hi there!\n" +
