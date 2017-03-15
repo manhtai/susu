@@ -234,10 +234,20 @@ module.exports = (controller) => {
                 n = Math.max(1, n);
 
                 try {
-                    t = t.trim();
-                    t += s == 'n' ? '\n' :
-                        s ? s : ' ';
-                    r = t.repeat(n);
+                    r = '';
+                    for (var j = 0; j < n; j++) {
+                        let k = j % 9;
+                        if (s == 'n') {
+                            r += `${t}\n`;
+                        } else if (s == 'z') {
+                            r += t;
+                            r += k === 0 ? '' : ' '.repeat(9*(k-1));
+                            r += k === 0 ? '' : t;
+                            r += '\n';
+                        } else {
+                            r += s ? `${t}${s}` : `${t} `;
+                        }
+                    }
                 } catch(e){}
                 bot.replyPublic(message, r);
 
