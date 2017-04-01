@@ -254,7 +254,7 @@ module.exports = (controller) => {
                 break;
 
             case '/xuc':
-                let list = message.text.split(' ').map(x => (x ? x.trim() : x));
+                let list = message.text.split('|').map(x => (x ? x.trim() : x));
                 bot.replyPublic(message, list[util.randomInt(0, list.length)]);
 
                 break;
