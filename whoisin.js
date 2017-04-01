@@ -253,6 +253,12 @@ module.exports = (controller) => {
 
                 break;
 
+            case '/xuc':
+                let list = message.text.split(' ').map(x => (x ? x.trim() : x));
+                bot.replyPublic(message, list[util.randomInt(0, list.length)]);
+
+                break;
+
             default:
                 bot.replyPublic(message, 'I\'m afraid I don\'t know how to ' + message.command + ' yet.');
 
