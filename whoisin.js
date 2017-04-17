@@ -85,7 +85,7 @@ module.exports = (controller) => {
                     if (lines.length > 1) {
                         actions = [];
                         for (var i = 1; i < lines.length; i++) {
-                            var answer = lines[i];
+                            var answer = lines[i].replace(/[><&]/g, '');
                             actions.push({
                                 name: 'answer',
                                 text: answer,
