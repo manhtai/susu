@@ -236,14 +236,8 @@ module.exports = (controller) => {
                 try {
                     r = '';
                     for (var j = 0; j < n; j++) {
-                        let k = j % 9;
                         if (s == 'n') {
                             r += `${t}\n`;
-                        } else if (s == 'z') {
-                            r += t;
-                            r += k === 0 ? '' : ' '.repeat(9*(k-1));
-                            r += k === 0 ? '' : t;
-                            r += '\n';
                         } else {
                             r += s ? `${t}${s}` : `${t} `;
                         }
