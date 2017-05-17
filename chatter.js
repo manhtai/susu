@@ -383,6 +383,14 @@ module.exports = (controller) => {
         }
     );
 
+    controller.hears(
+        ['count days'],
+        'direct_message,direct_mention,mention',
+        (bot, message) => {
+            bot.reply(message, `It's been ${util.dateDiffInDays(new Date('2016-12-24'), new Date())} days now ${cool()}`);
+        }
+    );
+
     // Catch all
     controller.hears(
         ['.*'],
