@@ -284,9 +284,11 @@ module.exports = (controller) => {
 
                     var newAttachments = [];
                     var lines = [];
+                    var lines_dict = {};
+                    var lines_set = [];
 
                     // look for an existing line/attachment and update it if found
-                    for (var i = 0; i < orig.attachments.length; i++) {
+                    for (let i = 0; i < orig.attachments.length; i++) {
                         var attachment = orig.attachments[i];
 
                         if (attachment.actions) {
@@ -313,6 +315,22 @@ module.exports = (controller) => {
                         line.answer = value;
                         line.add(username);
                         lines.push(line);
+                    }
+
+                    // group lines by answers
+                    for (let i = 0; i < lines.length; i++) {
+                        let line = lines[i];
+                        if (lines_dict[line.answer]) {
+                            lines_dict[line.answer].addList(line.entries);
+                        } else {
+                            lines_dict[line.answer] = line;
+                            lines_set.push(line.answer);
+                        }
+                    }
+                    lines = [];
+                    for (let i = 0; i < lines_set.length; i++) {
+                        let answer = lines_set[i];
+                        lines.push(lines_dict[answer]);
                     }
 
                     // sort lines by most votes
@@ -415,6 +433,11 @@ class AttachmentLine {
             this.remove(entry);
             this.entries.push(entry);
         }
+        return this;
+    }
+
+    addList(entry_list) {
+        entry_list.map((it) => {this.add(it);});
         return this;
     }
 
