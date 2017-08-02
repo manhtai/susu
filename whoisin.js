@@ -6,6 +6,7 @@ const safeEval = require('safe-eval');
 const config   = require('./const');
 const meme     = require('./meme');
 const util     = require('./util');
+const strip    = require('striptags');
 
 
 // I want to call back on all (err, resp, body) so I rewrite it
@@ -421,7 +422,7 @@ class AttachmentLine {
             });
             this.answer = parts[0];
             this.entries = parts[1].split(',').map((val) => {
-                return val.trim();
+                return strip(val).trim();
             });
         }
     }
