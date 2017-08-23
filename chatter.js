@@ -392,7 +392,7 @@ module.exports = (controller) => {
             let email = message.match[1].trim();
             controller.storage.users.all((err, allUsers) => {
                 if (!err && allUsers) {
-                    const users = allUsers.filter(u => u.profile && u.profile.email == email);
+                    const users = allUsers.filter(u => u.profile && email.indexOf(u.profile.email) !== -1);
                     if (users.length) {
                         bot.reply(message, `\`\`\`${JSON.stringify(member, null, 4)}\`\`\``);
                     } else {
