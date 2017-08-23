@@ -394,7 +394,7 @@ module.exports = (controller) => {
                 if (!err && allUsers) {
                     const users = allUsers.filter(u => u.profile && email.indexOf(u.profile.email) !== -1);
                     if (users.length) {
-                        bot.reply(message, `\`\`\`${JSON.stringify(member, null, 4)}\`\`\``);
+                        bot.reply(message, `\`\`\`${JSON.stringify(users[0], null, 4)}\`\`\``);
                     } else {
                         bot.reply(message, 'I can\'t find anything!');
                     }
