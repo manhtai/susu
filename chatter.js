@@ -384,6 +384,27 @@ module.exports = (controller) => {
         }
     );
 
+    // Get user username by email
+    controller.hears(
+        ['get user (.*)'],
+        'direct_message,direct_mention,mention',
+        (bot, message) => {
+            let email = message.match[1].trim();
+            controller.storage.users.all((err, allUsers) => {
+                if (!err && allUsers) {
+                    const users = allUsers.filter(u => u.profile && u.profile.email == email);
+                    if (users.length) {
+                        bot.reply(message, `\`\`\`${JSON.stringify(member, null, 4)}\`\`\``);
+                    } else {
+                        bot.reply(message, 'I can\'t find anything!');
+                    }
+                } else {
+                    bot.reply(message, 'I do not know her!');
+                }
+            });
+        }
+    );
+
     controller.hears(
         ['count days'],
         'direct_message,direct_mention,mention',
