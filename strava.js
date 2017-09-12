@@ -5,6 +5,7 @@ const util    = require('util');
 const strava  = require('strava-v3');
 const _       = require('lodash');
 const request = require('request');
+const cool    = require('cool-ascii-faces');
 
 const config   = require('./const');
 
@@ -114,10 +115,10 @@ function formatActivity(athlete, activity) {
   const emoji = EMOJI[activity.type];
   const who = util.format('%s %s', athlete.firstname, athlete.lastname);
   const link = util.format('<https://www.strava.com/activities/%d>', activity.id);
-  const distance = Math.round((activity.distance * 0.00062137) * 100) / 100;
+  const distance = Math.round(activity.distance / 10) / 100;
   const verb = VERBS[activity.type] || activity.type;
 
-  return `${who} vừa ${verb} ${distance} km về! :muscle:\n ${emoji} ${activity.name} ${link}`;
+  return `${who} vừa ${verb} ${distance} km về! ${cool()}\n ${emoji} ${activity.name} ${link}`;
 }
 
 
