@@ -110,14 +110,29 @@ function postActivityToSlack(webhook, athlete, activity) {
 }
 
 
+function formatTime(seconds) {
+    var sec_num = parseInt(seconds, 10);
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    var hoursLabel = hours ? `${hours} giờ ` : '';
+    var minutesLabel = minutes ? `${minutes} phút ` : '';
+    var secondsLabel = seconds ? `${seconds} giây` : '';
+    return `${hoursLabel}${minutesLabel}${secondsLabel}`.trim();
+}
+
+
 function formatActivity(athlete, activity) {
   const emoji = EMOJI[activity.type];
   const who = util.format('%s %s', athlete.firstname, athlete.lastname);
   const link = util.format('<https://www.strava.com/activities/%d>', activity.id);
-  const distance = Math.round(activity.distance / 10) / 100;
+  const distance = (activity.distance / 1000).toFixed(2);
+  const time = formatTime(activity.moving_time);
   const verb = VERBS[activity.type] || activity.type;
 
-  return `${who} vừa ${verb} ${distance} km về! ${cool()}\n ${emoji} ${activity.name} ${link}`;
+  return `${who} vừa ${verb} ${distance} km về! Mất ${time} ${cool()}
+  ${emoji} ${activity.name} ${link}`;
 }
 
 
