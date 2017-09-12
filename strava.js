@@ -23,10 +23,9 @@ const EMOJI = {
 
 
 function isValidActivity(activity) {
-  // Filter out activities we've already seen.
-  const SEVEN_DAYS = 1000 * 60 * 60 * 24 * 7;
-  // Filter out activities that are more than 7 days old.
-  const isStale = (new Date(activity.start_date).getTime()) <= (new Date().getTime() - SEVEN_DAYS);
+  // Filter out activities that are more than 2 days old.
+  const TWO_DAYS = 1000 * 60 * 60 * 24 * 2;
+  const isStale = (new Date(activity.start_date).getTime()) <= (new Date().getTime() - TWO_DAYS);
 
   // Filter out bike commutes.
   const isBikeCommute = activity.type === 'Bike' && activity.commute;
@@ -139,9 +138,8 @@ module.exports = (controller) => {
             checkForNewActivities(controller, true);
         });
       } else {
-        const theInitial = data.initial;
         if (data.last_check_time.getTime() < new Date().getTime() - config.STRAVA_CHECK_INTERVAL) {
-          data.last_check_time = new Date;
+          data.last_check_time = new Date();
           data.initial = false;
           controller.storage.teams.save(data, (err) => {
             if (err) return console.log('Error when saving last check time', err);
