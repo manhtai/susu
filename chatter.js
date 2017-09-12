@@ -12,10 +12,6 @@ const config = require('./const');
 
 module.exports = (controller) => {
 
-    // Bypass tick log
-    controller.on('tick', () => {});
-
-
     // Start conversation to save quote
     controller.hears(['savequote', 'save quote'],
         'direct_message,direct_mention,mention',

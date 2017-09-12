@@ -18,6 +18,13 @@ const DICTIONARY_API = process.env.DICTIONARY_API;
 
 const NEWRELIC_KEY = process.env.NEWRELIC_KEY;
 
+const STRAVA_TOKEN = process.env.STRAVA_TOKEN;
+const STRAVA_CLUBS = process.env.STRAVA_CLUBS || '';
+const STRAVA_CHECK_INTERVAL = 60000;
+const STRAVA_SLACK_WEBHOOK = process.env.STRAVA_SLACK_WEBHOOK;
+
+const SLACK_NAME = 'susu';
+
 
 module.exports = {
     clientId,
@@ -31,5 +38,10 @@ module.exports = {
     GOOGLE_API_KEY,
     WORDS_API,
     DICTIONARY_API,
+    STRAVA_TOKEN,
+    STRAVA_CLUBS,
+    SLACK_NAME,
+    STRAVA_CHECK_INTERVAL,
+    STRAVA_SLACK_WEBHOOK,
     NEWRELIC_KEY
 };

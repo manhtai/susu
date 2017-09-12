@@ -51,6 +51,7 @@ controller.on('rtm_close', () => {
 
 require('./chatter')(controller);
 require('./whoisin')(controller);
+require('./strava')(controller);
 
 
 // Setup server

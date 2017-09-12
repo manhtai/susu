@@ -355,7 +355,7 @@ module.exports = (controller) => {
                         text: orig.text,
                         attachments: orig.attachments,
                         channel: message.channel,
-                        username: 'susu' // FIXME: Should set as_user = false
+                        username: config.SLACK_NAME
                     };
                     controller.storage.users.get(config.BOT_BOSS, (err, user) => {
                         if (!err && user && user.access_token) {
