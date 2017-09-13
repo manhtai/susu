@@ -1,7 +1,6 @@
 // Credit: https://github.com/pifantastic/fitbot
 // Customized for susu by @manhtai
 
-const util    = require('util');
 const strava  = require('strava-v3');
 const _       = require('lodash');
 const request = require('request');
@@ -105,7 +104,7 @@ function postActivityToSlack(webhook, athlete, activity) {
       });
     }
 
-    console.info(util.format('Posted to slack: %s', message));
+    console.info(`Posted to slack: ${message}`);
   });
 }
 
@@ -116,7 +115,7 @@ function formatTime(seconds) {
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
     // var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
-    var hoursLabel = hours ? `${hours} giờ ` : '';
+    var hoursLabel = hours ? `${hours} tiếng ` : '';
     var minutesLabel = minutes ? `${minutes} phút` : '';
     // var secondsLabel = seconds ? `${seconds} giây` : '';
     return `${hoursLabel}${minutesLabel}`.trim();
@@ -125,8 +124,8 @@ function formatTime(seconds) {
 
 function formatActivity(athlete, activity) {
   const emoji = EMOJI[activity.type];
-  const who = util.format('%s %s', athlete.firstname, athlete.lastname);
-  const link = util.format('<https://www.strava.com/activities/%d>', activity.id);
+  const who = athlete.firstname;
+  const link = `<https://www.strava.com/activities/${activity.id}>`;
   const distance = (activity.distance / 1000).toFixed(2);
   const time = formatTime(activity.moving_time);
   const verb = VERBS[activity.type] || activity.type;
