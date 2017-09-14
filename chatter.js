@@ -409,6 +409,20 @@ module.exports = (controller) => {
         }
     );
 
+    // Help
+    controller.hears(
+        ['help'],
+        'direct_message,direct_mention,mention',
+        (bot, message) => {
+            bot.reply(
+                message,
+                cool() + " hi there!\n" +
+                "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` to see how powerful I am!\n" +
+                "My soul is in https://github.com/manhtai/susu, feel free to read through!"
+            );
+        }
+    );
+
     // Catch all
     controller.hears(
         ['.*'],
@@ -423,14 +437,7 @@ module.exports = (controller) => {
                     bot.botkit.log('Failed to add emoji reaction :(', err);
                 }
             });
-            if (message.user != config.BOT_BOSS && Math.random() < 0.4) {
-                bot.reply(
-                    message,
-                    cool() + " hi there!\n" +
-                    "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` to see how powerful I am!\n" +
-                    "My soul is in https://github.com/manhtai/susu, feel free to read through!"
-                );
-            }
         }
     );
+
 };
