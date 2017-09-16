@@ -125,7 +125,7 @@ function formatTime(seconds) {
 function formatActivity(athlete, activity) {
   const emoji = EMOJI[activity.type];
   const who = athlete.firstname;
-  const link = `<https://www.strava.com/activities/${activity.id}>`;
+  const link = `https://www.strava.com/activities/${activity.id}`;
   const distance = (activity.distance / 1000).toFixed(2);
   const time = formatTime(activity.moving_time);
   const verb = VERBS[activity.type] || activity.type;
