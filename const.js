@@ -23,7 +23,7 @@ const STRAVA_CLUBS = process.env.STRAVA_CLUBS || '';
 const STRAVA_CHECK_INTERVAL = 60000;
 const STRAVA_SLACK_WEBHOOK = process.env.STRAVA_SLACK_WEBHOOK;
 
-const SLACK_NAME = 'susu';
+const SLACK_NAME = 'mimi'; // Mimi is Susu's sister
 
 
 module.exports = {
