@@ -110,15 +110,39 @@ function postActivityToSlack(webhook, athlete, activity) {
 
 
 function formatTime(seconds) {
-    var sec_num = parseInt(seconds, 10);
-    var hours   = Math.floor(sec_num / 3600);
-    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-    // var seconds = sec_num - (hours * 3600) - (minutes * 60);
+  var sec_num = parseInt(seconds, 10);
+  var hours   = Math.floor(sec_num / 3600);
+  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+  // var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
-    var hoursLabel = hours ? `${hours} tiếng ` : '';
-    var minutesLabel = minutes ? `${minutes} phút` : '';
-    // var secondsLabel = seconds ? `${seconds} giây` : '';
-    return `${hoursLabel}${minutesLabel}`.trim();
+  var hoursLabel = hours ? `${hours} tiếng ` : '';
+  var minutesLabel = minutes ? `${minutes} phút` : '';
+  // var secondsLabel = seconds ? `${seconds} giây` : '';
+  return `${hoursLabel}${minutesLabel}`.trim();
+}
+
+
+function formatPaceTime(seconds) {
+  var sec_num = parseInt(seconds, 10);
+  var minutes = Math.floor(seconds / 60);
+  var seconds = sec_num - (minutes * 60);
+
+  if (minutes < 10) minutes = "0" + minutes;
+  if (seconds < 10) seconds = "0" + seconds;
+
+  return `${minutes}:${seconds}`;
+}
+
+
+function formatPace(speed, type) {
+  switch (type) {
+    case 'Run':
+      return `${formatPaceTime(1000/speed)} /km`;
+    case 'Swim':
+      return `${formatPaceTime(100/speed)} /100m`;
+    default:
+      return `${(speed*3.6).toFixed(2)} km/h`;
+  }
 }
 
 
@@ -129,8 +153,9 @@ function formatActivity(athlete, activity) {
   const distance = (activity.distance / 1000).toFixed(2);
   const time = formatTime(activity.moving_time);
   const verb = VERBS[activity.type] || activity.type;
+  const pace = formatPace(activity.average_speed, activity.type);
 
-  return `${who} vừa ${verb} ${distance} km về! Mất ${time} ${cool()}
+  return `${who} vừa ${verb} ${distance} km về, mất ${time}, tốc độ trung bình ${pace} ${cool()}
   ${emoji} ${activity.name} ${link}`;
 }
 
