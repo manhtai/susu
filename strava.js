@@ -26,9 +26,10 @@ function isValidActivity(activity) {
   const TWO_DAYS = 1000 * 60 * 60 * 24 * 2;
   const isStale = (new Date(activity.start_date).getTime()) <= (new Date().getTime() - TWO_DAYS);
 
-  // Filter out bike commutes.
-  const isBikeCommute = activity.type === 'Bike' && activity.commute;
-  return !isStale && !isBikeCommute;
+  // Filter out not-triathlon activities
+  const isTriathlon = ['Ride', 'Run', 'Swim'].indexOf(activity.type) > -1;
+
+  return !isStale && isTriathlon;
 }
 
 
@@ -147,12 +148,12 @@ function formatPace(speed, type) {
 
 
 function formatActivity(athlete, activity) {
-  const emoji = EMOJI[activity.type] || ':muscle:';
+  const emoji = EMOJI[activity.type];
   const who = athlete.firstname;
   const link = `https://www.strava.com/activities/${activity.id}`;
   const distance = (activity.distance / 1000).toFixed(2);
   const time = formatTime(activity.moving_time);
-  const verb = VERBS[activity.type] || activity.type;
+  const verb = VERBS[activity.type];
   const pace = formatPace(activity.average_speed, activity.type);
 
   return `${who} vừa ${verb} ${distance} km về, mất ${time}, tốc độ trung bình ${pace} ${cool()}
