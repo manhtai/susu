@@ -3,10 +3,12 @@
 require('newrelic');
 
 const Botkit = require('botkit');
-const config = require('./const');
 const express = require('express');
 const bodyParser = require('body-parser');
 const RateLimit = require('express-rate-limit');
+
+const config = require('./const');
+const facebook = require('./facebook');
 
 
 const limiter = new RateLimit({
@@ -65,6 +67,7 @@ webserver.use(bodyParser.urlencoded({ extended: true }));
 webserver.use(express.static(static_dir));
 
 webserver.get('/', (req, res) => { res.send('Hi, I am a bot!'); });
+webserver.use('/facebook', facebook);
 
 // Attach webserver to controller
 controller.webserver = webserver;

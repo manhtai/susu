@@ -25,6 +25,8 @@ const STRAVA_SLACK_WEBHOOK = process.env.STRAVA_SLACK_WEBHOOK;
 
 const SLACK_NAME = 'susu';
 
+const FACEBOOK_PAGE_TOKEN = process.env.FACEBOOK_PAGE_TOKEN;
+
 
 module.exports = {
     clientId,
@@ -43,5 +45,6 @@ module.exports = {
     SLACK_NAME,
     STRAVA_CHECK_INTERVAL,
     STRAVA_SLACK_WEBHOOK,
-    NEWRELIC_KEY
+    NEWRELIC_KEY,
+    FACEBOOK_PAGE_TOKEN
 };
