@@ -10,7 +10,9 @@ const sha256 = x => crypto.createHash('sha256').update(x, 'utf8').digest('hex');
 
 
 const getScreenShot = async (url, clip) => {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch(
+        {args: ['--no-sandbox', '--disable-setuid-sandbox']}
+    );
     const page = await browser.newPage();
 
     page.setViewport({ width: 1024, height: 768 });
