@@ -1,12 +1,9 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const crypto = require('crypto');
 
 const config = require('./const');
 
 const router = express.Router();
-
-const sha256 = x => crypto.createHash('sha256').update(x, 'utf8').digest('hex');
 
 
 const getScreenShot = async (url, clip) => {
