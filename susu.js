@@ -9,12 +9,13 @@ const RateLimit = require('express-rate-limit');
 
 const config = require('./const');
 const facebook = require('./facebook');
+const screenshot = require('./screenshot');
 
 
 const limiter = new RateLimit({
-  windowMs: 5000, // 1 second
-  max: 1, // 1 request/5s
-  delayMs: 1000 // 1000s delay each request
+  windowMs: 1000, // 1 second
+  max: 1, // 1 request/1s
+  delayMs: 100 // 100s delay each request
 });
 
 const controller = Botkit.slackbot({
@@ -68,6 +69,7 @@ webserver.use(express.static(static_dir));
 
 webserver.get('/', (req, res) => { res.send('Hi, I am a bot!'); });
 webserver.use('/facebook', facebook);
+webserver.use('/screenshot', screenshot);
 
 // Attach webserver to controller
 controller.webserver = webserver;
