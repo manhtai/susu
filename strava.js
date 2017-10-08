@@ -59,7 +59,7 @@ function checkForNewActivities(controller, initial) {
       // On the initial pass we just want to populate the database but not post
       // any activities. This makes it safe to start fitbot without bombing a
       // channel with messages.
-      activities.map((activity) => {
+      activities.constructor === Array && activities.forEach((activity) => {
         controller.storage.channels.get(activity.id, (err, acc) => {
           if (err) return console.error('Error getting activity from db', err);
 
