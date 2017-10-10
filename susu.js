@@ -38,11 +38,11 @@ const bot = controller.spawn({
 });
 
 
-bot.startRTM((err) => {
-    if (err) {
-        process.exit(1);
-    }
-});
+// bot.startRTM((err) => {
+//     if (err) {
+//         process.exit(1);
+//     }
+// });
 
 controller.on('rtm_close', () => {
     bot.startRTM((err) => {
@@ -55,6 +55,9 @@ controller.on('rtm_close', () => {
 require('./chatter')(controller);
 require('./whoisin')(controller);
 require('./strava')(controller);
+
+// CronJob
+require('./cron')(controller);
 
 
 // Setup server

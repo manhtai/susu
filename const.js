@@ -27,6 +27,8 @@ const SLACK_NAME = 'susu';
 
 const FACEBOOK_PAGE_TOKEN = process.env.FACEBOOK_PAGE_TOKEN;
 
+const SCREENSHOT_STRING = process.env.SCREENSHOT_STRING;
+
 
 module.exports = {
     clientId,
@@ -46,5 +48,6 @@ module.exports = {
     STRAVA_CHECK_INTERVAL,
     STRAVA_SLACK_WEBHOOK,
     NEWRELIC_KEY,
-    FACEBOOK_PAGE_TOKEN
+    FACEBOOK_PAGE_TOKEN,
+    SCREENSHOT_STRING
 };
