@@ -59,7 +59,6 @@ require('./strava')(controller);
 // CronJob
 require('./cron')(controller);
 
-
 // Setup server
 var static_dir =  __dirname + '/public';
 var webserver = express();

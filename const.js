@@ -25,9 +25,20 @@ const STRAVA_SLACK_WEBHOOK = process.env.STRAVA_SLACK_WEBHOOK;
 
 const SLACK_NAME = 'susu';
 
+let slack_api_token = {};
+process.env.SLACK_API_TOKEN && process.env.SLACK_API_TOKEN.split('|').map(
+    (tt) => {
+        const [team, token] = tt.split(':');
+        slack_api_token[team] = token;
+    }
+);
+const SLACK_API_TOKEN = slack_api_token;
+
 const FACEBOOK_PAGE_TOKEN = process.env.FACEBOOK_PAGE_TOKEN;
 
 const SCREENSHOT_STRING = process.env.SCREENSHOT_STRING;
+
+const REPORT_ID = 'report';
 
 
 module.exports = {
@@ -49,5 +60,7 @@ module.exports = {
     STRAVA_SLACK_WEBHOOK,
     NEWRELIC_KEY,
     FACEBOOK_PAGE_TOKEN,
-    SCREENSHOT_STRING
+    SCREENSHOT_STRING,
+    SLACK_API_TOKEN,
+    REPORT_ID
 };

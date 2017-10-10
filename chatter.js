@@ -1,13 +1,16 @@
 'use strict';
 
-const cowsay = require('cowsay');
-const cool   = require('cool-ascii-faces');
+const cowsay     = require('cowsay');
+const cool       = require('cool-ascii-faces');
+const prettyCron = require('prettycron');
+const cron       = require('cron');
 
 const util   = require('./util');
 const dict   = require('./dictionary');
 const google = require('./google');
 const cow    = require('./cow');
 const config = require('./const');
+const runCron = require('./cron');
 
 
 module.exports = (controller) => {
@@ -380,6 +383,145 @@ module.exports = (controller) => {
         }
     );
 
+    // Start conversation to save report links
+    controller.hears(['report (.*)'],
+        'direct_message,direct_mention,mention,message_received',
+        (bot, message) => {
+            const askForReport = (response, convo) => {
+                convo.ask('Add new report following this format: `{team}|{channel}|{time}|{name}|{url}`. I only support ViCare & Xander team for now.', (response, convo) => {
+
+                    if (response.text.split('|').length !== 5) {
+                        bot.reply(message, `Please look at the format above again!`);
+                        convo.stop();
+                        return;
+                    }
+                    const [team, channel, time, name, url] = response.text.split('|').map(
+                        t => t.trim()
+                    );
+
+                    if (['xander', 'vicare'].indexOf(team.toLowerCase()) === -1) {
+                        bot.reply(message, `I told you I only support ViCare and Xander!`);
+                        convo.stop();
+                        return;
+                    }
+
+                    try {
+                        new cron.CronJob(time, () => {});
+                    } catch (ex) {
+                        bot.reply(message, `Pattern of cron time: ${time} is not valid!`);
+                        convo.stop();
+                        return;
+                    }
+
+                    convo.ask(`So you want to send *${name}* report \`${url}\` to channel *#${channel}* of team *${team}* at ${prettyCron.toString(time)}?`, [
+                        {
+                            pattern: bot.utterances.yes,
+                            callback: (response, convo) => {
+                                addReport(response, convo);
+                                convo.next();
+                            }
+                        },
+                        {
+                            pattern: bot.utterances.no,
+                            callback: (response, convo) => {
+                                convo.stop();
+                            }
+                        },
+                        {
+                            default: true,
+                            callback: (response, convo) => {
+                                convo.repeat();
+                                convo.next();
+                            }
+                        }
+                    ]);
+
+                    convo.next();
+
+                }, {'key': 'content'});
+            };
+
+            const addReport = (response, convo) => {
+                convo.on('end', function(convo) {
+                    if (convo.status == 'completed') {
+                        // Save to team data
+                        controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
+                            if (!reports) {
+                                reports = {
+                                    id: config.REPORT_ID,
+                                    list: []
+                                };
+                            }
+                            const content = convo.extractResponse('content');
+                            const [team, channel, time, name, url] = content
+                                .split('|')
+                                .map(t => t.trim());
+                            reports.list.push({
+                                team, channel, time, name, url, content,
+                                owner: message.user
+                            });
+                            controller.storage.teams.save(reports, (err) => {
+                                if (!err) {
+                                    bot.reply(message, 'Save success!');
+                                    runCron(controller);
+                                } else {
+                                    bot.reply(message, "Sorry I can't save your report for now :(")
+                                }
+                            });
+                        });
+
+                    } else {
+                        // this happens if the conversation ended prematurely for some reason
+                        bot.reply(message, `OK, nevermind! ${cool()}`);
+                    }
+                });
+            };
+
+            const [command, id] = message.match[1].split(' ').map(i => i.trim());
+
+            switch (command) {
+                case 'add':
+                    // Ask to add new report
+                    bot.startConversation(message, askForReport);
+                    break;
+
+                case 'list':
+                    controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
+                        bot.reply(message, `${reports && reports
+                                .list
+                                .map((i, idx) => `#${idx+1}: \`${i.content}\``)
+                                .join('\n')}`);
+                    });
+                    break;
+
+                case 'refresh':
+                    runCron(controller);
+                    bot.reply(message, 'Refresh success!');
+                    break;
+
+                case 'delete':
+                    controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
+                        reports = {
+                            id: config.REPORT_ID,
+                            list: reports.list.filter(
+                                (l, idx) => (
+                                    // Only user can delete their reports
+                                    l.owner === message.user ||
+                                    message.user === config.BOT_BOSS
+                                ) && (idx != id - 1)
+                            )
+                        };
+                        controller.storage.teams.save(reports, (err) => {
+                            bot.reply(message, `#${id} is deleted (if you created it)`);
+                        });
+                    });
+                    break;
+
+                default:
+                    bot.reply(message, 'Use `report add`, `report list`, `report delete` to change report list. And `report refresh` to refresh the list.');
+            }
+    });
+
     // Get user username by email
     controller.hears(
         ['get user (.*)'],
@@ -420,23 +562,6 @@ module.exports = (controller) => {
                 "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` to see how powerful I am!\n" +
                 "My soul is in https://github.com/manhtai/susu, feel free to read through!"
             );
-        }
-    );
-
-    // Catch all
-    controller.hears(
-        ['.*'],
-        'direct_message,direct_mention,mention',
-        (bot, message) => {
-            bot.api.reactions.add({
-                timestamp: message.ts,
-                channel: message.channel,
-                name: 'heart',
-            }, (err, res) => {
-                if (err) {
-                    bot.botkit.log('Failed to add emoji reaction :(', err);
-                }
-            });
         }
     );
 

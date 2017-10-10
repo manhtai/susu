@@ -7,13 +7,14 @@ const util = require('./util');
 const config = require('./const');
 
 
-const postToChannel = (buffer, channels, name = 'screenshot.png') => {
+const postToChannel = (team, channel, buffer, name = 'screenshot.png') => {
   const imageUpload = "https://slack.com/api/files.upload";
+  const token = config.SLACK_API_TOKEN[team.toLowerCase()];
   request.post({
       url: imageUpload,
       formData: {
         username: config.SLACK_NAME,
-        token: config.api_token,
+        token: token,
         file: {
           value: buffer,
           options: {
@@ -22,7 +23,7 @@ const postToChannel = (buffer, channels, name = 'screenshot.png') => {
           }
         },
         filename: name,
-        channels: channels
+        channels: channel
       },
     },
     function(error, response, body) {
@@ -31,7 +32,7 @@ const postToChannel = (buffer, channels, name = 'screenshot.png') => {
 };
 
 
-const sendScreenshot = async(url, channels, name) => {
+const sendScreenshot = async(team, channel, url, name) => {
   const [_, query] = url.split('?');
   const params = querystring.parse(query);
   const clip = {
@@ -44,22 +45,37 @@ const sendScreenshot = async(url, channels, name) => {
   timeout = parseInt(timeout);
 
   const buffer = await (util.getScreenShot(params.url, clip, timeout));
-  postToChannel(buffer, channels, name);
+  postToChannel(team, channel, buffer, name);
 };
 
 
-module.exports = () => {
-  const jobs = config.SCREENSHOT_STRING.split('|');
-  jobs.map((job) => {
-    const [url, channels, cronTime, name] = job.split(';');
-    const fileName = `${name} ${moment().format("D-M")} report.png`;
-    const myJob = new cron.CronJob({
-      cronTime: cronTime,
-      onTick: () => {
-        sendScreenshot(url, channels, fileName);
-      },
-      start: true,
-      timeZone: 'Asia/Ho_Chi_Minh'
-    });
+const clearReports = (controller) => {
+  controller.reports = controller.reports || [];
+  controller.reports.forEach(j => j.stop());
+  controller.reports = [];
+};
+
+
+module.exports = (controller) => {
+  clearReports(controller);
+  controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
+    if (!err) {
+      reports && reports.list && reports.list.map((report) => {
+        const [team, channel, time, name, url] = [
+          report.team, report.channel, report.time, report.name, report.url
+        ];
+        const fileName = `${name} ${moment().format("D-M")} report.png`;
+        const fileUrl = url.substring(1, url.length-1).replace(/&amp;/g, "&");
+        const myJob = new cron.CronJob({
+          cronTime: time,
+          onTick: () => {
+            sendScreenshot(team, channel, fileUrl, fileName);
+          },
+          start: true,
+          timeZone: 'Asia/Ho_Chi_Minh'
+        });
+        controller.reports.push(myJob);
+      });
+    }
   });
 };
