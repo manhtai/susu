@@ -24,7 +24,7 @@ const getScreenShot = async (url, clip, timeout) => {
 
 router.get('/', async (req, res) => {
     const url = req.query.url;
-    const timeout = req.query.t || 5000;
+    const timeout = req.query.t || 1000;
     const xywh = [req.query.x, req.query.y, req.query.w, req.query.h];
     const [x, y, width, height] = xywh.map(i => !isNaN(i) ? parseInt(i): 0);
     const clip = { x, y, width, height };
