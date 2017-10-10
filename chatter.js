@@ -501,19 +501,25 @@ module.exports = (controller) => {
 
                 case 'delete':
                     controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
-                        reports = {
-                            id: config.REPORT_ID,
-                            list: reports.list.filter(
-                                (l, idx) => (
-                                    // Only user can delete their reports
-                                    l.owner === message.user ||
-                                    message.user === config.BOT_BOSS
-                                ) && (idx != id - 1)
-                            )
-                        };
-                        controller.storage.teams.save(reports, (err) => {
-                            bot.reply(message, `#${id} is deleted (if you created it)`);
-                        });
+                        const newList = reports.list.filter(
+                            (l, idx) => (
+                                // Only user can delete their reports
+                                l.owner === message.user ||
+                                message.user === config.BOT_BOSS
+                            ) && (idx != id - 1)
+                        );
+                        if (newList.length !== reports.list.length) {
+                            reports = {
+                                id: config.REPORT_ID,
+                                list: newList
+                            };
+                            controller.storage.teams.save(reports, (err) => {
+                                runCron(controller);
+                                bot.reply(message, `#${id} is deleted (if you created it)`);
+                            });
+                        } else {
+                            bot.reply(message, `You can't delete #${id}!`);
+                        }
                     });
                     break;
 
