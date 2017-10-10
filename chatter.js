@@ -388,7 +388,7 @@ module.exports = (controller) => {
         'direct_message,direct_mention,mention,message_received',
         (bot, message) => {
             const askForReport = (response, convo) => {
-                convo.ask('Add new report following this format: `{team}|{channel}|{time}|{name}|{url}`. I only support ViCare & Xander team for now.', (response, convo) => {
+                convo.ask('Add new report following this format: `{team} | {channel} | {time} | {name} | {url}`. I only support ViCare & Xander team for now.', (response, convo) => {
 
                     if (response.text.split('|').length !== 5) {
                         bot.reply(message, `Please look at the format above again!`);
