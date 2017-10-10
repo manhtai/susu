@@ -515,7 +515,7 @@ module.exports = (controller) => {
                             };
                             controller.storage.teams.save(reports, (err) => {
                                 runCron(controller);
-                                bot.reply(message, `#${id} is deleted (if you created it)`);
+                                bot.reply(message, `#${id} is deleted!`);
                             });
                         } else {
                             bot.reply(message, `You can't delete #${id}!`);
