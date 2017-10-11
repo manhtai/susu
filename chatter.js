@@ -384,7 +384,7 @@ module.exports = (controller) => {
     );
 
     // Start conversation to save report links
-    controller.hears(['report (.*)'],
+    controller.hears(['^report (.*)'],
         'direct_message,direct_mention,mention,message_received',
         (bot, message) => {
             const askForReport = (response, convo) => {
