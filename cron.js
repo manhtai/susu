@@ -7,9 +7,10 @@ const util = require('./util');
 const config = require('./const');
 
 
-const postToChannel = (team, channel, buffer, name = 'screenshot.png') => {
+const postToChannel = (team, channel, buffer, name) => {
   const imageUpload = "https://slack.com/api/files.upload";
   const token = config.SLACK_API_TOKEN[team.toLowerCase()];
+  const fileName = `${name} ${moment().format("D-M-YYYY_HH.mm")} report.png`;
   request.post({
       url: imageUpload,
       formData: {
@@ -18,15 +19,15 @@ const postToChannel = (team, channel, buffer, name = 'screenshot.png') => {
         file: {
           value: buffer,
           options: {
-            filename: name,
+            filename: fileName,
             contentType: 'image/png'
           }
         },
-        filename: name,
+        filename: fileName,
         channels: channel
       },
     },
-    function(error, response, body) {
+    (error, response, body) => {
       if (error) return console.error(`Error posting message to Slack ${error}`);
     });
 };
@@ -64,12 +65,11 @@ module.exports = (controller) => {
         const [team, channel, time, name, url] = [
           report.team, report.channel, report.time, report.name, report.url
         ];
-        const fileName = `${name} ${moment().format("D-M")} report.png`;
         const fileUrl = url.substring(1, url.length-1).replace(/&amp;/g, "&");
         const myJob = new cron.CronJob({
           cronTime: time,
           onTick: () => {
-            sendScreenshot(team, channel, fileUrl, fileName);
+            sendScreenshot(team, channel, fileUrl, name);
           },
           start: true,
           timeZone: 'Asia/Ho_Chi_Minh'
