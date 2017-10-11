@@ -40,6 +40,8 @@ const SCREENSHOT_STRING = process.env.SCREENSHOT_STRING;
 
 const REPORT_ID = 'report';
 
+const TIME_ZONE = 'Asia/Ho_Chi_Minh';
+
 
 module.exports = {
     clientId,
@@ -62,5 +64,6 @@ module.exports = {
     FACEBOOK_PAGE_TOKEN,
     SCREENSHOT_STRING,
     SLACK_API_TOKEN,
-    REPORT_ID
+    REPORT_ID,
+    TIME_ZONE
 };

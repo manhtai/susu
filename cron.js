@@ -1,7 +1,7 @@
 const cron = require('cron');
 const querystring = require('querystring');
 const request = require('request');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const util = require('./util');
 const config = require('./const');
@@ -10,7 +10,7 @@ const config = require('./const');
 const postToChannel = (team, channel, buffer, name) => {
   const imageUpload = "https://slack.com/api/files.upload";
   const token = config.SLACK_API_TOKEN[team.toLowerCase()];
-  const fileName = `${name} ${moment().format("D-M-YYYY_HH.mm")} report.png`;
+  const fileName = `${name} ${moment().tz(config.TIME_ZONE).format("D-M-YYYY_HH.mm")} report.png`;
   request.post({
       url: imageUpload,
       formData: {
@@ -72,7 +72,7 @@ module.exports = (controller) => {
             sendScreenshot(team, channel, fileUrl, name);
           },
           start: true,
-          timeZone: 'Asia/Ho_Chi_Minh'
+          timeZone: config.TIME_ZONE
         });
         controller.reports.push(myJob);
       });
