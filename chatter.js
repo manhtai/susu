@@ -505,7 +505,7 @@ module.exports = (controller) => {
                         const listCanDelete = reports.list
                             .map((l, idx) => ({ ...l, idx }))
                             .filter(l => l.owner === message.user || message.user === config.BOT_BOSS)
-                            .filter((l, idx) => idx == id)
+                            .filter((l, idx) => idx == id - 1)
                             .map(l => l.idx);
 
                         const newList = reports.list.filter((l, idx) => listCanDelete.indexOf(idx) === -1);
