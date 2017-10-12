@@ -501,13 +501,13 @@ module.exports = (controller) => {
 
                 case 'delete':
                     controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
-                        const newList = reports.list.filter(
-                            (l, idx) => (
-                                // Only user can delete their reports
-                                l.owner === message.user ||
-                                message.user === config.BOT_BOSS
-                            ) && (idx != id - 1)
-                        );
+                        // Only owner or boss can delete reports
+                        const listCanDelete = reports.list
+                            .map((l, idx) => ({ ...l, idx }))
+                            .filter(l => l.owner === message.user || message.user === config.BOT_BOSS);
+
+                        const newList = listCanDelete.filter(l => l.idx != id);
+
                         if (newList.length !== reports.list.length) {
                             reports = {
                                 id: config.REPORT_ID,
