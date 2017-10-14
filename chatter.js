@@ -494,6 +494,12 @@ module.exports = (controller) => {
                     });
                     break;
 
+                case 'raw':
+                    controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
+                        bot.reply(message, `\`\`\`${JSON.stringify(reports)}\`\`\``);
+                    });
+                    break;
+
                 case 'refresh':
                     runCron(controller);
                     bot.reply(message, 'Refresh success!');
@@ -567,7 +573,7 @@ module.exports = (controller) => {
             bot.reply(
                 message,
                 cool() + " hi there!\n" +
-                "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `savequote`, `showaquote`, `shutdown` to see how powerful I am!\n" +
+                "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `savequote`, `report help`, `shutdown` to see how powerful I am!\n" +
                 "My soul is in https://github.com/manhtai/susu, feel free to read through!"
             );
         }
