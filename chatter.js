@@ -4,6 +4,7 @@ const cowsay     = require('cowsay');
 const cool       = require('cool-ascii-faces');
 const prettyCron = require('prettycron');
 const cron       = require('cron');
+const moment     = require('moment-timezone');
 
 const util   = require('./util');
 const dict   = require('./dictionary');
@@ -558,10 +559,11 @@ module.exports = (controller) => {
     );
 
     controller.hears(
-        ['count days'],
+        ['^count love'],
         'direct_message,direct_mention,mention',
         (bot, message) => {
-            bot.reply(message, `It's been ${util.dateDiffInDays(new Date('2016-12-24'), new Date())} days now ${cool()}`);
+            const toDay = moment().tz(config.TIME_ZONE).format("YYYY-MM-DD");
+            bot.reply(message, `It's been ${util.preciseDiff('2016-12-24', toDay)} now ${cool()}`);
         }
     );
 
