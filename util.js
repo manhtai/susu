@@ -19,6 +19,7 @@ const getScreenShot = async(url, clip, timeout = 1000) => {
     waitUntil: "networkidle",
     networkIdleTimeout: timeout
   });
+  await page.waitFor(timeout);
   const buffer = await page.screenshot({
     clip
   });
