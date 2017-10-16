@@ -13,9 +13,9 @@ const screenshot = require('./screenshot');
 
 
 const limiter = new RateLimit({
-  windowMs: 1000, // 1 second
+  windowMs: 1000, // 1s
   max: 1, // 1 request/1s
-  delayMs: 100 // 100s delay each request
+  delayMs: 1000 // 1s delay each request
 });
 
 const controller = Botkit.slackbot({
