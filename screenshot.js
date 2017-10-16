@@ -21,13 +21,15 @@ router.get('/', async (req, res) => {
     // Send link to file
     res.send(`Visit ${req.headers.host}/screenshot/${filename} to get the file later...`);
 
-    const buffer = await (util.getScreenShot(url, clip, timeout));
-
+    // Create /temp folder
     if (!fs.existsSync(temp_dir))
         fs.mkdirSync(temp_dir);
 
-    // Write file to local
+    // Only write file to local if file does not exist
     const filepath = path.resolve(temp_dir, filename);
+    if (fs.existsSync(filepath)) return;
+
+    const buffer = await (util.getScreenShot(url, clip, timeout));
     fs.writeFile(filepath, buffer, (err) => {
         if (err) console.log(`Error while writing file for url ${url}`, err);
     });
