@@ -26,6 +26,7 @@
     "newrelic": "1.34.0",
     "node-wit": "4.0.0",
     "prettycron": "^0.10.0",
+    "pug": "^2.0.0-rc.4",
     "puppeteer": "^0.11.0",
     "request": "2.74.0",
     "safe-eval": "^0.3.0",

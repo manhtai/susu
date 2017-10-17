@@ -19,7 +19,8 @@ router.get('/', async (req, res) => {
     const filename = `${crypto.createHash('md5').update(req.url).digest("hex")}.png`;
 
     // Send link to file
-    res.send(`Visit ${req.headers.host}/screenshot/${filename} to get the file later...`);
+    const link = `/screenshot/${filename}`;
+    res.render('screenshot', { link });
 
     // Create /temp folder
     if (!fs.existsSync(temp_dir))
@@ -40,7 +41,7 @@ router.get('/:filename', async (req, res) => {
     const filename = req.params.filename;
     const filepath = path.resolve(temp_dir, filename);
     if (fs.existsSync(filepath)) res.sendFile(filepath);
-    else res.send('File not found! Please wait a little more or get the screenshot again.');
+    else res.sendFile(path.resolve('spin.gif'));
 });
 
 
