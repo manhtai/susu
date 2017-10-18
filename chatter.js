@@ -450,7 +450,8 @@ module.exports = (controller) => {
                             if (!reports) {
                                 reports = {
                                     id: config.REPORT_ID,
-                                    list: []
+                                    list: [],
+                                    mod: []
                                 };
                             }
                             const content = convo.extractResponse('content');
@@ -478,7 +479,7 @@ module.exports = (controller) => {
                 });
             };
 
-            const [command, id] = message.match[1].split(' ').map(i => i.trim());
+            const [command, ...args] = message.match[1].split(' ').map(i => i.trim());
 
             switch (command) {
                 case 'add':
@@ -495,6 +496,17 @@ module.exports = (controller) => {
                     });
                     break;
 
+                case 'mod':
+                    controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
+                        if (message.user === config.BOT_BOSS) {
+                            reports.mod = args;
+                            controller.storage.teams.save(reports, (err) => {
+                                if (!err) bot.reply(message, "Update mod success!");
+                            });
+                        }
+                    });
+                    break;
+
                 case 'raw':
                     controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
                         bot.reply(message, `\`\`\`${JSON.stringify(reports)}\`\`\``);
@@ -507,12 +519,16 @@ module.exports = (controller) => {
                     break;
 
                 case 'delete':
+                    const id = args[0];
                     controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
-                        // Only owner or boss can delete reports
+                        // Only owner or boss or mod can delete reports
                         const listCanDelete = reports.list
                             .map((l, idx) => ({ ...l, idx }))
                             .filter((l, idx) => idx == id - 1)
-                            .filter(l => l.owner === message.user || message.user === config.BOT_BOSS)
+                            .filter(l => l.owner === message.user ||
+                                message.user === config.BOT_BOSS ||
+                                reports.mod.indexOf(message.user) > -1
+                            )
                             .map(l => l.idx);
 
                         const newList = reports.list.filter((l, idx) => listCanDelete.indexOf(idx) === -1);
