@@ -499,7 +499,7 @@ module.exports = (controller) => {
                 case 'mod':
                     controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
                         if (message.user === config.BOT_BOSS) {
-                            reports.mod = args.slice(1);
+                            reports.mod = args;
                             controller.storage.teams.save(reports, (err) => {
                                 if (!err) bot.reply(message, "Update mod success!");
                             });
