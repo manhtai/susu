@@ -535,7 +535,7 @@ module.exports = (controller) => {
 
                         if (newList.length !== reports.list.length) {
                             reports = {
-                                id: config.REPORT_ID,
+                                ...reports,
                                 list: newList
                             };
                             controller.storage.teams.save(reports, (err) => {
