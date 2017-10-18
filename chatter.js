@@ -499,7 +499,7 @@ module.exports = (controller) => {
                 case 'mod':
                     controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
                         if (message.user === config.BOT_BOSS) {
-                            reports.mod = args;
+                            reports.mod = args.slice(1);
                             controller.storage.teams.save(reports, (err) => {
                                 if (!err) bot.reply(message, "Update mod success!");
                             });
@@ -527,7 +527,7 @@ module.exports = (controller) => {
                             .filter((l, idx) => idx == id - 1)
                             .filter(l => l.owner === message.user ||
                                 message.user === config.BOT_BOSS ||
-                                reports.mod.indexOf(message.user) > -1
+                                reports.mod && reports.mod.indexOf(message.user) > -1
                             )
                             .map(l => l.idx);
 
@@ -535,7 +535,7 @@ module.exports = (controller) => {
 
                         if (newList.length !== reports.list.length) {
                             reports = {
-                                id: config.REPORT_ID,
+                                ...reports,
                                 list: newList
                             };
                             controller.storage.teams.save(reports, (err) => {
