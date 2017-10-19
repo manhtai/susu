@@ -548,6 +548,23 @@ module.exports = (controller) => {
                     });
                     break;
 
+                case 'upload':
+                    const id = args[0];
+                    controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
+                        if (!err) {
+                            const report = reports.list.filter((r, idx) => idx == id - 1)[0];
+                            if (report) {
+                                const [team, channel, time, name, url] = [
+                                    report.team, report.channel, report.time, report.name, report.url
+                                ];
+                                const fileUrl = url.substring(1, url.length-1).replace(/&amp;/g, "&");
+                                util.sendScreenshot(team, channel, fileUrl, name);
+                                bot.reply(message, `I will send report ${name} to channel ${channel}, wait a sec...`);
+                            }
+                        }
+                    });
+                    break;
+
                 default:
                     bot.reply(message, 'Use `report add`, `report list`, `report delete` to change report list. And `report refresh` to refresh the list.');
             }

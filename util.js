@@ -1,7 +1,37 @@
 'use strict';
 
 const puppeteer = require('puppeteer');
-const moment = require('moment');
+const querystring = require('querystring');
+const request = require('request');
+const moment = require('moment-timezone');
+
+const config = require('./const');
+
+
+const postToChannel = (team, channel, buffer, name) => {
+  const imageUpload = "https://slack.com/api/files.upload";
+  const token = config.SLACK_API_TOKEN[team.toLowerCase()];
+  const fileName = `${name} ${moment().tz(config.TIME_ZONE).format("D-M-YYYY_HH.mm")} report.png`;
+  request.post({
+      url: imageUpload,
+      formData: {
+        username: config.SLACK_NAME,
+        token: token,
+        file: {
+          value: buffer,
+          options: {
+            filename: fileName,
+            contentType: 'image/png'
+          }
+        },
+        filename: fileName,
+        channels: channel
+      },
+    },
+    (error, response, body) => {
+      if (error) return console.error(`Error posting message to Slack ${error}`);
+    });
+};
 
 
 const getScreenShot = async(url, clip, timeout = 1000) => {
@@ -26,6 +56,23 @@ const getScreenShot = async(url, clip, timeout = 1000) => {
   await browser.close();
   console.log("End getting screenshot...");
   return buffer;
+};
+
+
+const sendScreenshot = async(team, channel, url, name) => {
+  const [_, query] = url.split('?');
+  const params = querystring.parse(query);
+  const clip = {
+    x: parseInt(params.x),
+    y: parseInt(params.y),
+    width: parseInt(params.w),
+    height: parseInt(params.h)
+  };
+  let timeout = params.t || 1000;
+  timeout = parseInt(timeout);
+
+  const buffer = await getScreenShot(params.url, clip, timeout);
+  postToChannel(team, channel, buffer, name);
 };
 
 
@@ -188,5 +235,6 @@ module.exports = {
   formatQuote,
   isSame,
   getScreenShot,
+  sendScreenshot,
   preciseDiff
 };
