@@ -32,20 +32,13 @@ router.get('/', async (req, res) => {
 
     if (fs.existsSync(filepath) || fs.existsSync(filetemp)) return;
 
-    fs.writeFile(filetemp, 'temp', (err) => {
-        if (err) console.log(`Error while writing temp file for url ${url}`, err);
+    fs.writeFileSync(filetemp, 'temp');
+    const buffer = await (util.getScreenShot(url, clip, timeout));
 
-        const buffer = await (util.getScreenShot(url, clip, timeout));
-
-        fs.unlink(filetemp, (err) => {
-            if (err) console.log(`Error while removing temp file for url ${url}`, err);
-
-            fs.writeFile(filepath, buffer, (err) => {
-                if (err) console.log(`Error while writing file for url ${url}`, err);
-            });
-        });
+    fs.unlinkSync(filetemp);
+    fs.writeFile(filepath, buffer, (err) => {
+        if (err) console.log(`Error while writing file for url ${url}`, err);
     });
-
 });
 
 
