@@ -28,12 +28,24 @@ router.get('/', async (req, res) => {
 
     // Only write file to local if file does not exist
     const filepath = path.resolve(temp_dir, filename);
-    if (fs.existsSync(filepath)) return;
+    const filetemp = filepath + '_temp';
 
-    const buffer = await (util.getScreenShot(url, clip, timeout));
-    fs.writeFile(filepath, buffer, (err) => {
-        if (err) console.log(`Error while writing file for url ${url}`, err);
+    if (fs.existsSync(filepath) || fs.existsSync(filetemp)) return;
+
+    fs.writeFile(filetemp, 'temp', (err) => {
+        if (err) console.log(`Error while writing temp file for url ${url}`, err);
+
+        const buffer = await (util.getScreenShot(url, clip, timeout));
+
+        fs.unlink(filetemp, (err) => {
+            if (err) console.log(`Error while removing temp file for url ${url}`, err);
+
+            fs.writeFile(filepath, buffer, (err) => {
+                if (err) console.log(`Error while writing file for url ${url}`, err);
+            });
+        });
     });
+
 });
 
 
