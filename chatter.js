@@ -480,6 +480,7 @@ module.exports = (controller) => {
             };
 
             const [command, ...args] = message.match[1].split(' ').map(i => i.trim());
+            const id = args[0];
 
             switch (command) {
                 case 'add':
@@ -519,7 +520,6 @@ module.exports = (controller) => {
                     break;
 
                 case 'delete':
-                    const id = args[0];
                     controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
                         // Only owner or boss or mod can delete reports
                         const listCanDelete = reports.list
@@ -549,7 +549,6 @@ module.exports = (controller) => {
                     break;
 
                 case 'upload':
-                    const id = args[0];
                     controller.storage.teams.get(config.REPORT_ID, (err, reports) => {
                         if (!err) {
                             const report = reports.list.filter((r, idx) => idx == id - 1)[0];
