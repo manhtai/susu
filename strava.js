@@ -114,11 +114,11 @@ function formatTime(seconds) {
   var sec_num = parseInt(seconds, 10);
   var hours   = Math.floor(sec_num / 3600);
   var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-  // var seconds = sec_num - (hours * 3600) - (minutes * 60);
+  var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
   var hoursLabel = hours ? `${hours} tiếng ` : '';
   var minutesLabel = minutes ? `${minutes} phút` : '';
-  // var secondsLabel = seconds ? `${seconds} giây` : '';
+  var secondsLabel = seconds ? `${seconds} giây` : '';
   return `${hoursLabel}${minutesLabel}`.trim();
 }
 
