@@ -119,7 +119,7 @@ function formatTime(seconds) {
   var hoursLabel = hours ? `${hours} tiếng ` : '';
   var minutesLabel = minutes ? `${minutes} phút` : '';
   var secondsLabel = seconds ? `${seconds} giây` : '';
-  return `${hoursLabel}${minutesLabel}`.trim();
+  return `${hoursLabel}${minutesLabel}${secondsLabel}`.trim();
 }
 
 
