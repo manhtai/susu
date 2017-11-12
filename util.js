@@ -8,7 +8,7 @@ const moment = require('moment-timezone');
 const config = require('./const');
 
 
-const postToChannel = (team, channel, buffer, name) => {
+const postImageToChannel = (team, channel, buffer, name) => {
   const imageUpload = "https://slack.com/api/files.upload";
   const token = config.SLACK_API_TOKEN[team.toLowerCase()];
   const fileName = `${name} ${moment().tz(config.TIME_ZONE).format("D-M-YYYY_HH.mm")} report.png`;
@@ -29,7 +29,26 @@ const postToChannel = (team, channel, buffer, name) => {
       },
     },
     (error, response, body) => {
-      if (error) return console.error(`Error posting message to Slack ${error}`);
+      console.log(body);
+    });
+};
+
+
+const sendHappyBirthday = (team, channel, members) => {
+  const postMessage = "https://slack.com/api/chat.postMessage";
+  const token = config.SLACK_API_TOKEN[team.toLowerCase()];
+  console.log(`Start to send happy birthday to ${members.join(', ')} in ${team}:${channel}`);
+  request.post({
+      url: postMessage,
+      formData: {
+        username: config.SLACK_NAME,
+        token: token,
+        text: `Happy birthday to ${members.join(', ')}`,
+        channel: channel
+      },
+    },
+    (error, response, body) => {
+      console.log(body);
     });
 };
 
@@ -72,7 +91,7 @@ const sendScreenshot = async(team, channel, url, name) => {
   timeout = parseInt(timeout);
 
   const buffer = await getScreenShot(params.url, clip, timeout);
-  postToChannel(team, channel, buffer, name);
+  postImageToChannel(team, channel, buffer, name);
 };
 
 
@@ -236,5 +255,6 @@ module.exports = {
   isSame,
   getScreenShot,
   sendScreenshot,
+  sendHappyBirthday,
   preciseDiff
 };

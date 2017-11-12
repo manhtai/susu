@@ -40,6 +40,8 @@ const SCREENSHOT_STRING = process.env.SCREENSHOT_STRING;
 
 const REPORT_ID = 'report';
 
+const BDAY_ID = 'birthday';
+
 const TIME_ZONE = 'Asia/Ho_Chi_Minh';
 
 
@@ -65,5 +67,6 @@ module.exports = {
     SCREENSHOT_STRING,
     SLACK_API_TOKEN,
     REPORT_ID,
+    BDAY_ID,
     TIME_ZONE
 };

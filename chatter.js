@@ -5,13 +5,15 @@ const cool       = require('cool-ascii-faces');
 const prettyCron = require('prettycron');
 const cron       = require('cron');
 const moment     = require('moment-timezone');
+const chrono     = require('chrono-node');
 
-const util   = require('./util');
-const dict   = require('./dictionary');
-const google = require('./google');
-const cow    = require('./cow');
-const config = require('./const');
-const runCron = require('./cron');
+const util            = require('./util');
+const dict            = require('./dictionary');
+const google          = require('./google');
+const cow             = require('./cow');
+const config          = require('./const');
+const addToUploadCron = require('./cron');
+const addToBdayCron   = require('./birthday');
 
 
 module.exports = (controller) => {
@@ -465,7 +467,7 @@ module.exports = (controller) => {
                             controller.storage.teams.save(reports, (err) => {
                                 if (!err) {
                                     bot.reply(message, 'Save success!');
-                                    runCron(controller);
+                                    addToUploadCron(controller);
                                 } else {
                                     bot.reply(message, "Sorry I can't save your report for now :(")
                                 }
@@ -515,7 +517,7 @@ module.exports = (controller) => {
                     break;
 
                 case 'refresh':
-                    runCron(controller);
+                    addToUploadCron(controller);
                     bot.reply(message, 'Refresh success!');
                     break;
 
@@ -539,7 +541,7 @@ module.exports = (controller) => {
                                 list: newList
                             };
                             controller.storage.teams.save(reports, (err) => {
-                                runCron(controller);
+                                addToUploadCron(controller);
                                 bot.reply(message, `#${id} is deleted!`);
                             });
                         } else {
@@ -598,6 +600,87 @@ module.exports = (controller) => {
             bot.reply(message, `It's been ${util.preciseDiff('2016-12-24', toDay)} now ${cool()}`);
         }
     );
+
+    // Start conversation to save bday
+    controller.hears(['^bday (.*)'],
+        'direct_message,direct_mention,mention,message_received',
+        (bot, message) => {
+
+            const [command, ...args] = message.match[1].split(' ').map(i => i.trim());
+
+            switch (command) {
+                case 'set':
+                    const [member, ...dayString] = args;
+                    const day = chrono.parseDate(dayString.join(' '));
+                    controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
+                        if (!bdays) {
+                            bdays = {
+                                id: config.BDAY_ID,
+                                bdays: {}
+                            };
+                        }
+
+                        if (day) {
+                            bdays.bdays[member] = [day.getDate(), day.getMonth() + 1];;
+                        } else {
+                            delete bdays.bdays[member];
+                        }
+
+
+                        controller.storage.teams.save(bdays, (err) => {
+                            const setBdayMessage = day ? `From now ${member}'s birthday is ${bdays.bdays[member][0]}/${bdays.bdays[member][1]}!` : `Clear ${member}'s birthday success!`;
+                            if (!err) {
+                                addToBdayCron(controller);
+                                bot.reply(message, setBdayMessage);
+                            }
+                        });
+                    });
+                    break;
+
+                case 'list':
+                    controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
+                        if (!err && bdays && bdays.bdays)  {
+                            const bdayList = [];
+                            for (let m in bdays.bdays) {
+                                const bday = bdays.bdays[m];
+                                bdayList.push(`${m}: ${bday[0]}/${bday[1]}`);
+                            }
+                            bot.reply(message, `${bdayList.join('\n')}`);
+                        }
+                    });
+                    break;
+
+                case 'next':
+                    controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
+                        if (!err && bdays && bdays.bdays)  {
+                            const bdayList = [];
+                            for (let m in bdays.bdays) {
+                                const bday = bdays.bdays[m];
+                                const bdayCron = `0 0 ${bday[0]} ${bday[1]} *`;
+                                bdayList.push({
+                                    nextDate: prettyCron.getNextDate(bdayCron),
+                                    member: m,
+                                    bday: bday
+                                });
+                            }
+                            bdayList.sort((a, b) => a.nextDate > b.nextDate);
+                            const nextBday = bdayList.filter(b =>
+                                b.bday[0] === bdayList[0].bday[0] &&
+                                b.bday[1] === bdayList[0].bday[1]
+                            );
+                            bot.reply(message,
+                                nextBday
+                                .map(n => `${n.member}: ${n.bday[0]}/${n.bday[1]}`)
+                                .join('\n')
+                            );
+                        }
+                    });
+                    break;
+
+                default:
+                    bot.reply(message, 'Use `bday set @member date`, `bday list`, `bday next` to change birthdays.');
+            }
+    });
 
     // Help
     controller.hears(
