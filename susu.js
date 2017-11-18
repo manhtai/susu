@@ -70,10 +70,10 @@ webserver.use(bodyParser.json());
 webserver.use(bodyParser.urlencoded({ extended: true }));
 webserver.use(express.static(static_dir));
 
-webserver.set('view engine', 'pug'); // Use pug as template engine
-
 webserver.get('/', (req, res) => { res.send('Hi, I am a bot!'); });
 webserver.use('/facebook', facebook);
+
+// Deprecated, use mimi instead
 webserver.use('/screenshot', screenshot);
 
 // Attach webserver to controller
