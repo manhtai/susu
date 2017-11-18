@@ -36,8 +36,6 @@ const SLACK_API_TOKEN = slack_api_token;
 
 const FACEBOOK_PAGE_TOKEN = process.env.FACEBOOK_PAGE_TOKEN;
 
-const SCREENSHOT_STRING = process.env.SCREENSHOT_STRING;
-
 const REPORT_ID = 'report';
 
 const BDAY_ID = 'birthday';
@@ -64,7 +62,6 @@ module.exports = {
     STRAVA_SLACK_WEBHOOK,
     NEWRELIC_KEY,
     FACEBOOK_PAGE_TOKEN,
-    SCREENSHOT_STRING,
     SLACK_API_TOKEN,
     REPORT_ID,
     BDAY_ID,

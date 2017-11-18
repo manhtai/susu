@@ -9,7 +9,6 @@ const RateLimit = require('express-rate-limit');
 
 const config = require('./const');
 const facebook = require('./facebook');
-const screenshot = require('./screenshot');
 
 
 const limiter = new RateLimit({
@@ -74,7 +73,6 @@ webserver.set('view engine', 'pug'); // Use pug as template engine
 
 webserver.get('/', (req, res) => { res.send('Hi, I am a bot!'); });
 webserver.use('/facebook', facebook);
-webserver.use('/screenshot', screenshot);
 
 // Attach webserver to controller
 controller.webserver = webserver;
