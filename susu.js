@@ -8,7 +8,6 @@ const bodyParser = require('body-parser');
 const RateLimit = require('express-rate-limit');
 
 const config = require('./const');
-const facebook = require('./facebook');
 
 
 const limiter = new RateLimit({
@@ -72,7 +71,6 @@ webserver.use(express.static(static_dir));
 webserver.set('view engine', 'pug'); // Use pug as template engine
 
 webserver.get('/', (req, res) => { res.send('Hi, I am a bot!'); });
-webserver.use('/facebook', facebook);
 
 // Attach webserver to controller
 controller.webserver = webserver;

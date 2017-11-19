@@ -25,18 +25,13 @@ const STRAVA_SLACK_WEBHOOK = process.env.STRAVA_SLACK_WEBHOOK;
 
 const SLACK_NAME = 'susu';
 
-let slack_api_token = {};
+const SLACK_API_TOKEN = {};
 process.env.SLACK_API_TOKEN && process.env.SLACK_API_TOKEN.split('|').map(
     (tt) => {
         const [team, token] = tt.split(':');
-        slack_api_token[team] = token;
+        SLACK_API_TOKEN[team] = token;
     }
 );
-const SLACK_API_TOKEN = slack_api_token;
-
-const FACEBOOK_PAGE_TOKEN = process.env.FACEBOOK_PAGE_TOKEN;
-
-const REPORT_ID = 'report';
 
 const BDAY_ID = 'birthday';
 
@@ -61,9 +56,7 @@ module.exports = {
     STRAVA_CHECK_INTERVAL,
     STRAVA_SLACK_WEBHOOK,
     NEWRELIC_KEY,
-    FACEBOOK_PAGE_TOKEN,
     SLACK_API_TOKEN,
-    REPORT_ID,
     BDAY_ID,
-    TIME_ZONE
+    TIME_ZONE,
 };
