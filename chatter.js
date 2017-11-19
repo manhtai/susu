@@ -3,7 +3,6 @@
 const cowsay     = require('cowsay');
 const cool       = require('cool-ascii-faces');
 const prettyCron = require('prettycron');
-const cron       = require('cron');
 const moment     = require('moment-timezone');
 const chrono     = require('chrono-node');
 
@@ -12,7 +11,6 @@ const dict            = require('./dictionary');
 const google          = require('./google');
 const cow             = require('./cow');
 const config          = require('./const');
-const addToUploadCron = require('./cron');
 const addToBdayCron   = require('./birthday');
 
 
