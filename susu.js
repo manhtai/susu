@@ -55,7 +55,6 @@ require('./whoisin')(controller);
 require('./strava')(controller);
 
 // CronJob
-require('./cron')(controller);
 require('./birthday')(controller);
 
 // Setup server
