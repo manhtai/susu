@@ -335,7 +335,7 @@ module.exports = (controller) => {
         ['update users'],
         'direct_message,direct_mention,mention,message_received',
         (bot, message) => {
-            if (message.user != config.BOT_BOSS) return;
+            // if (message.user != config.BOT_BOSS) return;
             bot.api.users.list({token: config.api_token},
                 (err, response) => {
                     if (!err) {
