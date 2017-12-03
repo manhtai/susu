@@ -503,13 +503,13 @@ module.exports = (controller) => {
 
     // Help
     controller.hears(
-        ['help'],
+        ['^help$'],
         'direct_message,direct_mention,mention',
         (bot, message) => {
             bot.reply(
                 message,
                 cool() + " hi there!\n" +
-                "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `savequote`, `report help`, `shutdown` to see how powerful I am!\n" +
+                "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `metabot help`, `report help`, `shutdown` to see how powerful I am!\n" +
                 "My soul is in https://github.com/manhtai/susu, feel free to read through!"
             );
         }
