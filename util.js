@@ -13,7 +13,11 @@ const sendHappyBirthday = (team, channel, members) => {
       formData: {
         username: config.SLACK_NAME,
         token: token,
-        text: `Happy birthday to ${members.join(', ')}`,
+        text: `:tada: CHÚC MỪNG SINH NHẬT ${members.join(', ')} :tada:
+Chúc ${members.join(', ')} một ngày sinh nhật thật vui vẻ! :birthday:
+ViCare rất vinh dự được trở thành một phần nhỏ trong tuổi mới của bạn. Chúc bạn sang một tuổi mới sẽ ngày càng tự tin hơn, hạnh phúc hơn và luôn gặp thuận lợi với mọi quyết định đã chọn!
+:dung::dimitri::azure::tai::stone::hiep::mai::thu::hong:
+`,
         channel: channel
       },
     },
