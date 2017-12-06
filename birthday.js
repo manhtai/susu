@@ -19,7 +19,7 @@ module.exports = (controller) => {
         const dayList = {};
         for (let m in bdays.bdays) {
             const bday = bdays.bdays[m];
-            const time = `0 10 ${bday[0]} ${bday[1]} *`;
+            const time = `0 10 ${bday[0]} ${bday[1]-1} *`;
             if (!dayList[time]) {
                 dayList[time] = [m];
             } else {

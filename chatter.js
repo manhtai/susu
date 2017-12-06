@@ -457,15 +457,14 @@ module.exports = (controller) => {
                     });
                     break;
 
-                case 'batch':
+                case 'batchh':
                     if (!args.length) return;
 
+                    let count = 0;
                     for (let arg of args.join('').split('|')) {
-                        const [username, dayString] = arg.split(',').map(x => x.trim());
-
-                        controller.storage.users.get(username, (err, member) => {
+                        const [username_, dayString] = arg.split(',').map(x => x.trim());
+                        setTimeout(username => controller.storage.users.get(username, (err, member) => {
                             if (!err && member) {
-
                                 member = `<@${member.uid}|${username}>`;
 
                                 const day = chrono.parseDate(dayString);
@@ -478,22 +477,19 @@ module.exports = (controller) => {
                                     }
 
                                     if (day) {
-                                        bdays.bdays[member] = [day.getDate(), day.getMonth() + 1];;
-                                    } else {
-                                        delete bdays.bdays[member];
+                                        bdays.bdays[member] = [day.getDate(), day.getMonth() + 1];
+                                        controller.storage.teams.save(bdays, (err) => {
+                                            const setBdayMessage = day ? `From now ${member}'s birthday is ${bdays.bdays[member][0]}/${bdays.bdays[member][1]}!` : `Clear ${member}'s birthday success!`;
+                                            if (!err) {
+                                                addToBdayCron(controller);
+                                                bot.reply(message, setBdayMessage);
+                                            }
+                                        });
                                     }
-
-
-                                    controller.storage.teams.save(bdays, (err) => {
-                                        const setBdayMessage = day ? `From now ${member}'s birthday is ${bdays.bdays[member][0]}/${bdays.bdays[member][1]}!` : `Clear ${member}'s birthday success!`;
-                                        if (!err) {
-                                            addToBdayCron(controller);
-                                            bot.reply(message, setBdayMessage);
-                                        }
-                                    });
                                 });
                             }
-                        });
+                        }), 1000*count, username_);
+                        count += 1;
                     }
                     break;
 
