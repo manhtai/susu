@@ -428,6 +428,7 @@ module.exports = (controller) => {
             const [command, ...args] = message.match[1].split(' ').map(i => i.trim());
 
             switch (command) {
+
                 case 'set':
                     const [member, ...dayString] = args;
                     const day = chrono.parseDate(dayString.join(' '));
@@ -454,6 +455,46 @@ module.exports = (controller) => {
                             }
                         });
                     });
+                    break;
+
+                case 'batch':
+                    if (!args.length) return;
+
+                    for (let arg of args.join('').split('|')) {
+                        const [username, dayString] = arg.split(',').map(x => x.trim());
+
+                        controller.storage.users.get(username, (err, member) => {
+                            if (!err && member) {
+
+                                member = `<@${member.uid}|${username}>`;
+
+                                const day = chrono.parseDate(dayString);
+                                controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
+                                    if (!bdays) {
+                                        bdays = {
+                                            id: config.BDAY_ID,
+                                            bdays: {}
+                                        };
+                                    }
+
+                                    if (day) {
+                                        bdays.bdays[member] = [day.getDate(), day.getMonth() + 1];;
+                                    } else {
+                                        delete bdays.bdays[member];
+                                    }
+
+
+                                    controller.storage.teams.save(bdays, (err) => {
+                                        const setBdayMessage = day ? `From now ${member}'s birthday is ${bdays.bdays[member][0]}/${bdays.bdays[member][1]}!` : `Clear ${member}'s birthday success!`;
+                                        if (!err) {
+                                            addToBdayCron(controller);
+                                            bot.reply(message, setBdayMessage);
+                                        }
+                                    });
+                                });
+                            }
+                        });
+                    }
                     break;
 
                 case 'list':
