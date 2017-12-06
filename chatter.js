@@ -457,7 +457,7 @@ module.exports = (controller) => {
                     });
                     break;
 
-                case 'batchh':
+                case 'batch':
                     if (!args.length) return;
 
                     let count = 0;
@@ -465,7 +465,7 @@ module.exports = (controller) => {
                         const [username_, dayString] = arg.split(',').map(x => x.trim());
                         setTimeout(username => controller.storage.users.get(username, (err, member) => {
                             if (!err && member) {
-                                member = `<@${member.uid}|${username}>`;
+                                member = `<@${member.uid}>`;
 
                                 const day = chrono.parseDate(dayString);
                                 controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
@@ -509,24 +509,24 @@ module.exports = (controller) => {
                 case 'next':
                     controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
                         if (!err && bdays && bdays.bdays)  {
-                            const bdayList = [];
+                            let bdayNextList = [];
+                            let bday, nextDate;
                             for (let m in bdays.bdays) {
-                                const bday = bdays.bdays[m];
-                                const bdayCron = `0 0 ${bday[0]} ${bday[1]} *`;
-                                bdayList.push({
-                                    nextDate: prettyCron.getNextDate(bdayCron),
+                                bday = bdays.bdays[m];
+                                nextDate = prettyCron.getNextDate(`0 0 ${bday[0]} ${bday[1]} *`);
+                                bdayNextList.push({
+                                    nextDate: nextDate.valueOf(),
                                     member: m,
-                                    bday: bday
+                                    bdayLabel: moment(nextDate)
+                                    .tz(config.TIME_ZONE)
+                                    .format("DD/MM/YYYY")
                                 });
                             }
-                            bdayList.sort((a, b) => a.nextDate > b.nextDate);
-                            const nextBday = bdayList.filter(b =>
-                                b.bday[0] === bdayList[0].bday[0] &&
-                                b.bday[1] === bdayList[0].bday[1]
-                            );
+                            bdayNextList.sort((a, b) => a.nextDate - b.nextDate);
                             bot.reply(message,
-                                nextBday
-                                .map(n => `${n.member}: ${n.bday[0]}/${n.bday[1]}`)
+                                bdayNextList
+                                .slice(0, 3)
+                                .map(n => `${n.member}: ${n.bdayLabel}`)
                                 .join('\n')
                             );
                         }
