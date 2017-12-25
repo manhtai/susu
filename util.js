@@ -12,6 +12,7 @@ const sendHappyBirthday = (team, channel, members) => {
       url: postMessage,
       formData: {
         username: config.SLACK_NAME,
+        icon_url: "https://vicare.vn/static/img/default-staff.png",
         token: token,
         text: `:tada: CHÚC MỪNG SINH NHẬT ${members.join(', ')} :tada:
 Chúc ${members.join(', ')} một ngày sinh nhật thật vui vẻ! :birthday:
