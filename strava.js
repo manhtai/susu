@@ -68,14 +68,7 @@ function checkForNewActivities(controller, initial) {
               if (err) return console.log('Error saving activity to db', err);
 
               if (!initial) {
-                strava.activities.get({
-                  access_token: config.STRAVA_TOKEN,
-                  id: activity.id
-                }, (err, detail) => {
-                  if (err) return console.error('Error fetching activity details from strava', err);
-
-                  postActivityToSlack(config.STRAVA_SLACK_WEBHOOK, activity.athlete, detail);
-                });
+                  postActivityToSlack(config.STRAVA_SLACK_WEBHOOK, activity);
               }
             });
           }
@@ -86,8 +79,8 @@ function checkForNewActivities(controller, initial) {
 };
 
 
-function postActivityToSlack(webhook, athlete, activity) {
-  var message = formatActivity(athlete, activity);
+function postActivityToSlack(webhook, activity) {
+  var message = formatActivity(activity);
 
   request.post({
     url: webhook,
@@ -147,7 +140,8 @@ function formatPace(speed, type) {
 }
 
 
-function formatActivity(athlete, activity) {
+function formatActivity(activity) {
+  const athlete = activity.athlete;
   const emoji = EMOJI[activity.type];
   const who = athlete.firstname;
   const link = `https://www.strava.com/activities/${activity.id}`;
