@@ -55,6 +55,5 @@ module.exports = {
     STRAVA_SLACK_WEBHOOK,
     NEWRELIC_KEY,
     SLACK_API_TOKEN,
-    BDAY_ID,
     TIME_ZONE,
 };
