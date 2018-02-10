@@ -11,7 +11,6 @@ const dict            = require('./dictionary');
 const google          = require('./google');
 const cow             = require('./cow');
 const config          = require('./const');
-const addToBdayCron   = require('./birthday');
 
 
 module.exports = (controller) => {
@@ -420,124 +419,6 @@ module.exports = (controller) => {
         }
     );
 
-    // Start conversation to save bday
-    controller.hears(['^bday (.*)'],
-        'direct_message,direct_mention,mention,message_received',
-        (bot, message) => {
-
-            const [command, ...args] = message.match[1].split(' ').map(i => i.trim());
-
-            switch (command) {
-
-                case 'set':
-                    const [member, ...dayString] = args;
-                    const day = chrono.parseDate(dayString.join(' '));
-                    controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
-                        if (!bdays) {
-                            bdays = {
-                                id: config.BDAY_ID,
-                                bdays: {}
-                            };
-                        }
-
-                        if (day) {
-                            bdays.bdays[member] = [day.getDate(), day.getMonth() + 1];;
-                        } else {
-                            delete bdays.bdays[member];
-                        }
-
-
-                        controller.storage.teams.save(bdays, (err) => {
-                            const setBdayMessage = day ? `From now ${member}'s birthday is ${bdays.bdays[member][0]}/${bdays.bdays[member][1]}!` : `Clear ${member}'s birthday success!`;
-                            if (!err) {
-                                addToBdayCron(controller);
-                                bot.reply(message, setBdayMessage);
-                            }
-                        });
-                    });
-                    break;
-
-                case 'batch':
-                    if (!args.length) return;
-
-                    let count = 0;
-                    for (let arg of args.join('').split('|')) {
-                        const [username_, dayString] = arg.split(',').map(x => x.trim());
-                        setTimeout(username => controller.storage.users.get(username, (err, member) => {
-                            if (!err && member) {
-                                member = `<@${member.uid}>`;
-
-                                const day = chrono.parseDate(dayString);
-                                controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
-                                    if (!bdays) {
-                                        bdays = {
-                                            id: config.BDAY_ID,
-                                            bdays: {}
-                                        };
-                                    }
-
-                                    if (day) {
-                                        bdays.bdays[member] = [day.getDate(), day.getMonth() + 1];
-                                        controller.storage.teams.save(bdays, (err) => {
-                                            const setBdayMessage = day ? `From now ${member}'s birthday is ${bdays.bdays[member][0]}/${bdays.bdays[member][1]}!` : `Clear ${member}'s birthday success!`;
-                                            if (!err) {
-                                                addToBdayCron(controller);
-                                                bot.reply(message, setBdayMessage);
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        }), 1000*count, username_);
-                        count += 1;
-                    }
-                    break;
-
-                case 'list':
-                    controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
-                        if (!err && bdays && bdays.bdays)  {
-                            const bdayList = [];
-                            for (let m in bdays.bdays) {
-                                const bday = bdays.bdays[m];
-                                bdayList.push(`${m}: ${bday[0]}/${bday[1]}`);
-                            }
-                            bot.reply(message, `${bdayList.join('\n')}`);
-                        }
-                    });
-                    break;
-
-                case 'next':
-                    controller.storage.teams.get(config.BDAY_ID, (err, bdays) => {
-                        if (!err && bdays && bdays.bdays)  {
-                            let bdayNextList = [];
-                            let bday, nextDate;
-                            for (let m in bdays.bdays) {
-                                bday = bdays.bdays[m];
-                                nextDate = prettyCron.getNextDate(`0 0 ${bday[0]} ${bday[1]} *`);
-                                bdayNextList.push({
-                                    nextDate: nextDate.valueOf(),
-                                    member: m,
-                                    bdayLabel: moment(nextDate)
-                                    .tz(config.TIME_ZONE)
-                                    .format("DD/MM/YYYY")
-                                });
-                            }
-                            bdayNextList.sort((a, b) => a.nextDate - b.nextDate);
-                            bot.reply(message,
-                                bdayNextList
-                                .slice(0, 3)
-                                .map(n => `${n.member}: ${n.bdayLabel}`)
-                                .join('\n')
-                            );
-                        }
-                    });
-                    break;
-
-                default:
-                    bot.reply(message, 'Use `bday set @member date`, `bday list`, `bday next` to change birthdays.');
-            }
-    });
-
     // Help
     controller.hears(
         ['^help$'],
@@ -546,7 +427,7 @@ module.exports = (controller) => {
             bot.reply(
                 message,
                 cool() + " hi there!\n" +
-                "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `metabot help`, `report help`, `shutdown` to see how powerful I am!\n" +
+                "Try command me by `/ahem`, `/meme`, `/tinh` or tag me with `search`, `say`, `cowsay`, `shutdown` to see how powerful I am!\n" +
                 "My soul is in https://github.com/manhtai/susu, feel free to read through!"
             );
         }

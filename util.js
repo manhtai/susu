@@ -4,32 +4,7 @@ const request = require('request');
 const config = require('./const');
 
 
-const sendHappyBirthday = (team, channel, members) => {
-  const postMessage = "https://slack.com/api/chat.postMessage";
-  const token = config.SLACK_API_TOKEN[team.toLowerCase()];
-  console.log(`Start to send happy birthday to ${members.join(', ')} in ${team}:${channel}`);
-  request.post({
-      url: postMessage,
-      formData: {
-        username: config.SLACK_NAME,
-        icon_url: "https://vicare.vn/static/img/default-staff.png",
-        token: token,
-        text: `:tada: CHÚC MỪNG SINH NHẬT ${members.join(', ')} :tada:
-Chúc ${members.join(', ')} một ngày sinh nhật thật vui vẻ! :birthday:
-ViCare rất vinh dự được trở thành một phần nhỏ trong tuổi mới của bạn. Chúc bạn sang một tuổi mới sẽ ngày càng tự tin hơn, hạnh phúc hơn và luôn gặp thuận lợi với mọi quyết định đã chọn!
-:dung::dimitri::azure::tai::stone::hiep::mai::thu::hong:
-`,
-        channel: channel
-      },
-    },
-    (error, response, body) => {
-      console.log(body);
-    });
-};
-
-
 const randomInt = (low, high) => Math.floor(Math.random() * (high - low) + low);
-
 
 const formatQuote = (quote) => '*' + quote.content + '*\n  _~ ' + quote.author + '_';
 
@@ -185,6 +160,5 @@ module.exports = {
   randomInt,
   formatQuote,
   isSame,
-  sendHappyBirthday,
   preciseDiff,
 };

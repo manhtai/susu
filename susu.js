@@ -54,9 +54,6 @@ require('./chatter')(controller);
 require('./whoisin')(controller);
 require('./strava')(controller);
 
-// CronJob
-require('./birthday')(controller);
-
 // Setup server
 var static_dir =  __dirname + '/public';
 var webserver = express();

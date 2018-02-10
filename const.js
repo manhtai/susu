@@ -33,8 +33,6 @@ process.env.SLACK_API_TOKEN && process.env.SLACK_API_TOKEN.split('|').map(
     }
 );
 
-const BDAY_ID = 'birthday';
-
 const TIME_ZONE = 'Asia/Ho_Chi_Minh';
 
 
