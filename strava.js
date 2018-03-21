@@ -4,7 +4,6 @@
 const strava  = require('strava-v3');
 const _       = require('lodash');
 const request = require('request');
-const cool    = require('cool-ascii-faces');
 const crypto    = require('crypto');
 
 const config   = require('./const');
@@ -160,15 +159,14 @@ function formatActivity(activity) {
   const athlete = activity.athlete;
   const emoji = EMOJI[activity.type];
   const who = athlete.firstname;
-  const link = `https://www.strava.com/activities/${activity.id}`;
+  // const link = `https://www.strava.com/activities/${activity.id}`;
   const distance = (activity.distance / 1000).toFixed(2);
   const time = formatTime(activity.moving_time);
   const verb = VERBS[activity.type];
   const average_speed = activity.distance / activity.moving_time;
   const pace = formatPace(average_speed, activity.type);
 
-  return `${who} vừa ${verb} ${distance} km về, mất ${time}, tốc độ trung bình ${pace} ${cool()}
-  ${emoji} ${activity.name} ${link}`;
+  return `${who} vừa ${verb} ${distance} km về, mất ${time}, tốc độ trung bình ${pace} ${emoji} ${activity.name}`;
 }
 
 
