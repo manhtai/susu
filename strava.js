@@ -5,6 +5,7 @@ const strava  = require('strava-v3');
 const _       = require('lodash');
 const request = require('request');
 const cool    = require('cool-ascii-faces');
+const crypto    = require('crypto');
 
 const config   = require('./const');
 
@@ -33,13 +34,27 @@ function isValidActivity(activity) {
 }
 
 
+// We have to do this because Strava does not return activity id no more
+function getUniqueFromActivity(activity) {
+  const t = activity.athlete.firstname +
+    activity.athlete.lastname +
+    activity.name +
+    activity.distance +
+    activity.moving_time +
+    activity.elapsed_time +
+    activity.total_elevation_gain +
+    activity.type;
+  return crypto.createHash('md5').update(t).digest("hex");
+}
+
+
 function checkForNewActivities(controller, initial) {
   initial = !!initial
 
   config.STRAVA_CLUBS.split(',').forEach(function(clubId) {
     strava.clubs.listActivities({
       access_token: config.STRAVA_TOKEN,
-      per_page: 200,
+      per_page: 5,
       id: clubId,
     }, function(error, activities) {
       if (error) {
@@ -60,6 +75,7 @@ function checkForNewActivities(controller, initial) {
       // any activities. This makes it safe to start fitbot without bombing a
       // channel with messages.
       activities.constructor === Array && activities.forEach((activity) => {
+        activity.id = activity.id || getUniqueFromActivity(activity);
         controller.storage.channels.get(activity.id, (err, acc) => {
           if (err) return console.error('Error getting activity from db', err);
 
@@ -148,7 +164,8 @@ function formatActivity(activity) {
   const distance = (activity.distance / 1000).toFixed(2);
   const time = formatTime(activity.moving_time);
   const verb = VERBS[activity.type];
-  const pace = formatPace(activity.average_speed, activity.type);
+  const average_speed = activity.distance / activity.moving_time;
+  const pace = formatPace(average_speed, activity.type);
 
   return `${who} vừa ${verb} ${distance} km về, mất ${time}, tốc độ trung bình ${pace} ${cool()}
   ${emoji} ${activity.name} ${link}`;
