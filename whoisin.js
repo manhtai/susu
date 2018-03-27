@@ -455,7 +455,6 @@ function ahemResponse(message, bot, controller) {
             actions: bottomActions
         });
 
-        console.log(message);
         bot.replyPublic(message, {
             text: text,
             attachments: attachments

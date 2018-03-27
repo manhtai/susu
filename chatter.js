@@ -445,6 +445,13 @@ module.exports = (controller) => {
             message.command = command;
             message.text = text;
 
+            // Hacky way to send message as a slash_command response
+            const json = (msg) => {
+                util.hookMessageToSlack(message.channel, msg);
+            };
+            const res = { json };
+            bot.res = res;
+
             whoisin.ahemResponse(message, bot, controller);
         }
     )

@@ -156,9 +156,57 @@ const preciseDiff = (d1, d2, returnValueObject) => {
 // End copy
 
 
+function hookMessageToSlack(channel, message) {
+  let body = {
+    username: config.SLACK_NAME
+  };
+
+  if (typeof(message) == 'string') {
+    body.text = message;
+  } else {
+    body = { ...body, ...message };
+  }
+
+  if (channel) body.channel = channel;
+
+  request.post({
+    url: config.SLACK_WEBHOOK,
+    json: true,
+    body: body,
+  }, function(error) {
+    if (error) {
+      return console.error('Error posting message to Slack: ', error, message);
+    }
+  });
+  console.info(`Post to slack: ${JSON.stringify(body)}`);
+}
+
+
+function postMessageToSlack(channel, message) {
+    const postMessageAPI = "https://slack.com/api/chat.postMessage";
+    const token = config.api_token;
+    console.log(`Send message ${message} to ${channel}`);
+    request.post({
+        url: postMessageAPI,
+        formData: {
+            username: config.SLACK_NAME,
+            icon_url: "https://vicare.vn/static/img/default-staff.png",
+            token: token,
+            text: message,
+            channel: channel
+        },
+      },
+      (error, response, body) => {
+          console.log(body);
+    });
+}
+
+
 module.exports = {
   randomInt,
   formatQuote,
   isSame,
   preciseDiff,
+  postMessageToSlack,
+  hookMessageToSlack
 };

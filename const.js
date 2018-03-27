@@ -21,9 +21,10 @@ const NEWRELIC_KEY = process.env.NEWRELIC_KEY;
 const STRAVA_TOKEN = process.env.STRAVA_TOKEN;
 const STRAVA_CLUBS = process.env.STRAVA_CLUBS || '';
 const STRAVA_CHECK_INTERVAL = 60000;
-const STRAVA_SLACK_WEBHOOK = process.env.STRAVA_SLACK_WEBHOOK;
+const STRAVA_CHANNEL = process.env.STRAVA_CHANNEL;
 
 const SLACK_NAME = 'susu';
+const SLACK_WEBHOOK = process.env.SLACK_WEBHOOK;
 
 const SLACK_API_TOKEN = {};
 process.env.SLACK_API_TOKEN && process.env.SLACK_API_TOKEN.split('|').map(
@@ -43,6 +44,8 @@ module.exports = {
     api_token,
     verify_token,
     mongoStorage,
+    SLACK_WEBHOOK,
+    SLACK_API_TOKEN,
     BOT_BOSS,
     GOOGLE_CX,
     GOOGLE_API_KEY,
@@ -50,10 +53,9 @@ module.exports = {
     DICTIONARY_API,
     STRAVA_TOKEN,
     STRAVA_CLUBS,
+    STRAVA_CHANNEL,
     SLACK_NAME,
     STRAVA_CHECK_INTERVAL,
-    STRAVA_SLACK_WEBHOOK,
     NEWRELIC_KEY,
-    SLACK_API_TOKEN,
     TIME_ZONE,
 };

@@ -7,6 +7,7 @@ const request = require('request');
 const crypto    = require('crypto');
 
 const config   = require('./const');
+const util     = require('./util');
 
 const VERBS = {
   'Ride': 'đạp xe',
@@ -83,7 +84,8 @@ function checkForNewActivities(controller, initial) {
               if (err) return console.log('Error saving activity to db', err);
 
               if (!initial) {
-                  postActivityToSlack(config.STRAVA_SLACK_WEBHOOK, activity);
+                  var message = formatActivity(activity);
+                  util.postMessageToSlack(config.STRAVA_CHANNEL, message);
               }
             });
           }
@@ -93,29 +95,6 @@ function checkForNewActivities(controller, initial) {
   });
 };
 
-
-function postActivityToSlack(webhook, activity) {
-  var message = formatActivity(activity);
-
-  request.post({
-    url: webhook,
-    method: 'POST',
-    json: true,
-    body: {
-      username: config.SLACK_NAME,
-      text: message
-    },
-  }, function(error) {
-    if (error) {
-      return console.error('Error posting message to Slack', {
-        error: error,
-        activity: activity,
-      });
-    }
-
-    console.info(`Posted to slack: ${message}`);
-  });
-}
 
 
 function formatTime(seconds) {
