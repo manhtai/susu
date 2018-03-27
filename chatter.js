@@ -11,6 +11,7 @@ const dict            = require('./dictionary');
 const google          = require('./google');
 const cow             = require('./cow');
 const config          = require('./const');
+const whoisin         = require('./whoisin');
 
 
 module.exports = (controller) => {
@@ -433,4 +434,18 @@ module.exports = (controller) => {
         }
     );
 
+    // Ahem
+    controller.hears(
+        ['^ahem(m|) (.*)'],
+        'direct_message,direct_mention,mention',
+        (bot, message) => {
+            const command = message.match[1] == 'm' ? '/ahemm' : '/ahem';
+            const text = message.match[2];
+
+            message.command = command;
+            message.text = text;
+
+            whoisin.ahemResponse(message, bot, controller);
+        }
+    )
 };
