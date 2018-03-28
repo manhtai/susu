@@ -35,6 +35,7 @@ process.env.SLACK_API_TOKEN && process.env.SLACK_API_TOKEN.split('|').map(
 );
 
 const TIME_ZONE = 'Asia/Ho_Chi_Minh';
+const REMINDER_ID = 'REMINDER';
 
 
 module.exports = {
@@ -58,4 +59,5 @@ module.exports = {
     STRAVA_CHECK_INTERVAL,
     NEWRELIC_KEY,
     TIME_ZONE,
+    REMINDER_ID,
 };

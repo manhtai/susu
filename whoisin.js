@@ -44,7 +44,27 @@ function whoIsIn(controller) {
 
             case '/ahem':
             case '/ahemm':
-                ahemResponse(message, bot, controller);
+                if (message.text === '' || message.text === 'help') {
+                    // Display invisible help
+                    bot.replyPrivate(message, 'Usage: "Will you marry me? <3 | Yes | No | What?"');
+                } else if (message.text === 'restore') {
+                    // Restore latest saved message from storage
+                    controller.storage.channels.get(message.channel, (err, channelData) => {
+                        if (!err && channelData && channelData.original_message &&
+                            message.user === config.BOT_BOSS)
+                            bot.replyPublic(message, channelData.original_message);
+                        else
+                            bot.replyPrivate(message, 'What are you doing, kid?');
+                    });
+                } else {
+                    const reponse = getAhemResponse(message);
+                    bot.replyPublic(message, response, (err) => {
+                        if (err && err.message === 'channel_not_found') {
+                            bot.replyPrivate(message, 'Sorry, I can not write to a channel or group I am not a part of!');
+                        }
+                    });
+                }
+
                 break;
 
             case '/meme':
@@ -364,110 +384,87 @@ class AttachmentLine {
 }
 
 
-function ahemResponse(message, bot, controller) {
-    if (message.text === '' || message.text === 'help') {
-        // Display invisible help
-        bot.replyPrivate(message, 'Usage: "Will you marry me? <3 | Yes | No | What?"');
-    } else if (message.text === 'restore') {
-        // Restore latest saved message from storage
-        controller.storage.channels.get(message.channel, (err, channelData) => {
-            if (!err && channelData && channelData.original_message &&
-                message.user === config.BOT_BOSS)
-                bot.replyPublic(message, channelData.original_message);
-            else
-                bot.replyPrivate(message, 'What are you doing, kid?');
-        });
-    } else {
-        var yes_or_no_callback = message.command == '/ahem' ?
-            'yes_or_no_callback' :
-            'yes_or_no_callback_m';
-        // Create new message
-        var lines = message.text.split('|').map(it => it.trim());
-        var text = lines[0];
+function getAhemResponse(message) {
+    var yes_or_no_callback = message.command == '/ahem' ? 'yes_or_no_callback' : 'yes_or_no_callback_m';
 
-        // max 15 answers (3 for buttons, 1 for move to bottom, 15 for each answer)
-        if (lines.length > 16) {
-            bot.replyPublic(message, `:sob: Sorry, you may only enter 15 options. Here is what you entered: ahem ${message.text}`);
-            return;
-        }
+    // Create new message
+    var lines = message.text.split('|').map(it => it.trim());
+    var text = lines[0];
 
-        // default actions incase the user doesn't specify one
-        var actions = [{
-            name: 'answer',
-            text: 'Có',
-            type: 'button',
-            value: 'Có',
-            style: 'primary'
-        }, {
-            name: 'answer',
-            text: 'Không',
-            type: 'button',
-            value: 'Không',
-            style: 'default'
-        }];
-
-        if (lines.length > 1) {
-            actions = [];
-            for (var i = 1; i < lines.length; i++) {
-                var answer = lines[i].replace(/[><&]/g, '');
-                actions.push({
-                    name: 'answer',
-                    text: answer,
-                    type: 'button',
-                    value: answer,
-                    style: 'default'
-                });
-            }
-        }
-
-        // split the buttons into blocks of five if there are that many different
-        // questions
-        let attachments = [];
-        actions.forEach((action, num) => {
-            let idx = Math.floor(num / 5);
-            if (!attachments[idx]) {
-                attachments[idx] = {
-                    text: '',
-                    fallback: message.text,
-                    callback_id: yes_or_no_callback,
-                    color: '#FF749C',
-                    actions: []
-                };
-            }
-            attachments[idx].actions.push(action);
-        });
-
-        let bottomActions = [{
-            name: 'recycle',
-            text: ':arrow_down:',
-            type: 'button'
-        }, {
-            name: 'delete',
-            text: ':arrows_counterclockwise:',
-            type: 'button'
-        }];
-
-        // move to the bottom button
-        attachments.push({
-            text: '',
-            fallback: 'move to the bottom',
-            callback_id: yes_or_no_callback,
-            actions: bottomActions
-        });
-
-        bot.replyPublic(message, {
-            text: text,
-            attachments: attachments
-        }, (err) => {
-            if (err && err.message === 'channel_not_found') {
-                bot.replyPrivate(message, 'Sorry, I can not write to a channel or group I am not a part of!');
-            }
-        });
+    // max 15 answers (3 for buttons, 1 for move to bottom, 15 for each answer)
+    if (lines.length > 16) {
+        return `:sob: Sorry, you may only enter 15 options. Here is what you entered: ahem ${message.text}`;
     }
+
+    // default actions incase the user doesn't specify one
+    var actions = [{
+        name: 'answer',
+        text: 'Có',
+        type: 'button',
+        value: 'Có',
+        style: 'primary'
+    }, {
+        name: 'answer',
+        text: 'Không',
+        type: 'button',
+        value: 'Không',
+        style: 'default'
+    }];
+
+    if (lines.length > 1) {
+        actions = [];
+        for (var i = 1; i < lines.length; i++) {
+            var answer = lines[i].replace(/[><&]/g, '');
+            actions.push({
+                name: 'answer',
+                text: answer,
+                type: 'button',
+                value: answer,
+                style: 'default'
+            });
+        }
+    }
+
+    // split the buttons into blocks of five if there are that many different
+    // questions
+    let attachments = [];
+    actions.forEach((action, num) => {
+        let idx = Math.floor(num / 5);
+        if (!attachments[idx]) {
+            attachments[idx] = {
+                text: '',
+                fallback: message.text,
+                callback_id: yes_or_no_callback,
+                color: '#FF749C',
+                actions: []
+            };
+        }
+        attachments[idx].actions.push(action);
+    });
+
+    let bottomActions = [{
+        name: 'recycle',
+        text: ':arrow_down:',
+        type: 'button'
+    }, {
+        name: 'delete',
+        text: ':arrows_counterclockwise:',
+        type: 'button'
+    }];
+
+    // move to the bottom button
+    attachments.push({
+        text: '',
+        fallback: 'move to the bottom',
+        callback_id: yes_or_no_callback,
+        actions: bottomActions
+    });
+
+    return { text, attachments }
 }
 
 
 module.exports = {
-    ahemResponse,
-    whoIsIn
+    getAhemResponse,
+    whoIsIn,
 };

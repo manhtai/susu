@@ -5,6 +5,7 @@ const cool       = require('cool-ascii-faces');
 const prettyCron = require('prettycron');
 const moment     = require('moment-timezone');
 const chrono     = require('chrono-node');
+const cron       = require('cron');
 
 const util            = require('./util');
 const dict            = require('./dictionary');
@@ -12,6 +13,7 @@ const google          = require('./google');
 const cow             = require('./cow');
 const config          = require('./const');
 const whoisin         = require('./whoisin');
+const commands        = require('./commands');
 
 
 module.exports = (controller) => {
@@ -384,12 +386,6 @@ module.exports = (controller) => {
         }
     );
 
-    controller.hears(['^report (.*)'],
-        'direct_message,direct_mention,mention,message_received',
-        (bot, message) => {
-            bot.reply(message, 'Please chat `report help` with mimi. I don\'t do this anymore.');
-    });
-
     // Get user username by email
     controller.hears(
         ['get user (.*)'],
@@ -434,25 +430,179 @@ module.exports = (controller) => {
         }
     );
 
-    // Ahem
-    controller.hears(
-        ['^ahem(m|) (.*)'],
-        'direct_message,direct_mention,mention',
+    // Start conversation to save command question
+    controller.hears(['^remind (.*)'],
+        'direct_message,direct_mention,mention,message_received',
         (bot, message) => {
-            const command = message.match[1] == 'm' ? '/ahemm' : '/ahem';
-            const text = message.match[2];
+            const askForReminder = (response, convo) => {
+                convo.ask("Add new reminder following this format: `{name} $ {command} $ {time} $ {meta}`.", (response, convo) => {
 
-            message.command = command;
-            message.text = text;
+                    const [name, command, time, meta] = response.text.split('$').map(
+                        t => t.trim()
+                    );
 
-            // Hacky way to send message as a slash_command response
-            const json = (msg) => {
-                util.hookMessageToSlack(message.channel, msg);
+                    // Validate time
+                    try {
+                        new cron.CronJob(time, () => {});
+                    } catch (ex) {
+                        bot.reply(message, `Pattern of cron time: ${time} is not valid!`);
+                        convo.stop();
+                        return;
+                    }
+
+                    convo.ask(`So you want to set reminder *${name}* at ${prettyCron.toString(time)}, using command ${command}?`, [
+                        {
+                            pattern: bot.utterances.yes,
+                            callback: (response, convo) => {
+                                addReminder(response, convo);
+                                convo.next();
+                            }
+                        },
+                        {
+                            pattern: bot.utterances.no,
+                            callback: (response, convo) => {
+                                convo.stop();
+                            }
+                        },
+                        {
+                            default: true,
+                            callback: (response, convo) => {
+                                convo.repeat();
+                                convo.next();
+                            }
+                        }
+                    ]);
+
+                    convo.next();
+
+                }, {'key': 'content'});
             };
-            const res = { json };
-            bot.res = res;
 
-            whoisin.ahemResponse(message, bot, controller);
-        }
-    )
+            const addReminder = (response, convo) => {
+                convo.on('end', function(convo) {
+                    if (convo.status == 'completed') {
+                        // Save to team data
+                        controller.storage.teams.get(config.REMINDER_ID, (err, reminders) => {
+                            if (!reminders) {
+                                reminders = {
+                                    id: config.REMINDER_ID,
+                                    list: [],
+                                    mod: [],
+                                };
+                            }
+                            const content = convo.extractResponse('content');
+                            const [name, command, time, meta] = content.split('$').map(t => t.trim());
+                            reminders.list.push({
+                                name, command, time, meta,
+                                owner: message.user
+                            });
+                            // Add idx for reminder list
+                            let idx = 1;
+                            for (let i in reminders.list) {
+                                if (!reminders.list[i].idx) {
+                                    reminders.list[i].idx = idx;
+                                } else {
+                                    idx = reminders.list[i].idx;
+                                }
+                                idx += 1;
+                            };
+                            controller.storage.teams.save(reminders, (err) => {
+                                if (!err) {
+                                    bot.reply(message, 'Save success!');
+                                    commands.reminderJob(controller);
+                                } else {
+                                    bot.reply(message, "Sorry I can't save your reminder for now :(")
+                                }
+                            });
+                        });
+
+                    } else {
+                        // this happens if the conversation ended prematurely for some reason
+                        bot.reply(message, `OK, nevermind! ${cool()}`);
+                    }
+                });
+            };
+
+            const [command, ...args] = message.match[1].split(' ').map(i => i.trim());
+            const id = args[0];
+
+            switch (command) {
+                case 'add':
+                    // Ask to add new report
+                    bot.startConversation(message, askForReminder);
+                    break;
+
+                case 'list':
+                    controller.storage.teams.get(config.REMINDER_ID, (err, reminders) => {
+                        bot.reply(message, `${reminders && reminders
+                                .list
+                                .map(i => `#${i.idx}: \`\`\`${i.name} ${i.meta}\`\`\``)
+                                .join('\n')}`);
+                    });
+                    break;
+
+                case 'mod':
+                    controller.storage.teams.get(config.REMINDER_ID, (err, reminders) => {
+                        reminders.mod = args;
+                        controller.storage.teams.save(reminders, (err) => {
+                            if (!err) bot.reply(message, "Update mod success for " +  args.map(m => `<@${m}>`).join(', '));
+                        });
+                    });
+                    break;
+
+                case 'raw':
+                    controller.storage.teams.get(config.REMINDER_ID, (err, reminders) => {
+                        bot.reply(message, `\`\`\`${JSON.stringify(reminders)}\`\`\``);
+                    });
+                    break;
+
+                case 'refresh':
+                    command.reminderJob(controller);
+                    bot.reply(message, 'Refresh success!');
+                    break;
+
+                case 'delete':
+                    controller.storage.teams.get(config.REMINDER_ID, (err, reminders) => {
+                        if (!reminders || !reminders.list) return;
+
+                        // Only owner or mod can delete reminders
+                        const toDeleteReminder = reminders.list
+                            .filter(l => l.idx == id)
+                            .filter(l => l.owner === message.user ||
+                                reminders.mod && reminders.mod.indexOf(message.user) > -1
+                            )[0];
+
+                        if (toDeleteReminder) {
+                            reminders = {
+                                ...reminders,
+                                list: reminders.list.filter(
+                                    l => l.idx != toDeleteReminder.idx
+                                )
+                            };
+                            controller.storage.teams.save(reminders, (err) => {
+                                commands.reminderJob(controller);
+                                bot.reply(message, `Reminder #${toDeleteReminder.idx}: *${toDeleteReminder.name}* is deleted!`);
+                            });
+                        } else {
+                            bot.reply(message, `You can't delete #${id}!`);
+                        }
+                    });
+                    break;
+
+                case 'send':
+                    controller.storage.teams.get(config.REMINDER_ID, (err, reminders) => {
+                        if (!err) {
+                            const re = reminders.list.filter(a => a.idx == id)[0];
+                            if (re) {
+                                commands.sendReminderToChannel(re);
+                                bot.reply(message, `I will send reminder ${al.name} to its channel if exists, wait a sec...`);
+                            }
+                        }
+                    });
+                    break;
+
+                default:
+                    bot.reply(message, 'Use `remind list` to view full list, `remind add`, `remind delete` to change the list, `remind send 7` to manually send reminder #7. And `remind refresh` to refresh the list.');
+            }
+    });
 };
