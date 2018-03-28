@@ -536,7 +536,7 @@ module.exports = (controller) => {
                     controller.storage.teams.get(config.REMINDER_ID, (err, reminders) => {
                         bot.reply(message, `${reminders && reminders
                                 .list
-                                .map(i => `#${i.idx}: \`\`\`${i.name} ${i.meta}\`\`\``)
+                                .map(i => `#${i.idx}: \`\`\`${i.name} $ ${i.command} $ ${i.time} $ ${i.meta}\`\`\``)
                                 .join('\n')}`);
                     });
                     break;
