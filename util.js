@@ -190,7 +190,7 @@ function postMessageToSlack(channel, message) {
         url: postMessageAPI,
         formData: {
             username: config.SLACK_NAME,
-            icon_url: "https://vicare.vn/static/img/default-staff.png",
+            icon_url: "https://avatars.slack-edge.com/2017-11-10/269430428768_35c509a623199c63fa8d_512.jpg",
             token: token,
             text: message,
             channel: channel
