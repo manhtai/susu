@@ -57,7 +57,7 @@ function whoIsIn(controller) {
                             bot.replyPrivate(message, 'What are you doing, kid?');
                     });
                 } else {
-                    const reponse = getAhemResponse(message);
+                    const response = getAhemResponse(message);
                     bot.replyPublic(message, response, (err) => {
                         if (err && err.message === 'channel_not_found') {
                             bot.replyPrivate(message, 'Sorry, I can not write to a channel or group I am not a part of!');
