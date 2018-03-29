@@ -595,7 +595,7 @@ module.exports = (controller) => {
                             const re = reminders.list.filter(a => a.idx == id)[0];
                             if (re) {
                                 commands.sendReminderToChannel(re);
-                                bot.reply(message, `I will send reminder ${al.name} to its channel if exists, wait a sec...`);
+                                bot.reply(message, `I will send reminder ${re.name} to its channel if exists, wait a sec...`);
                             }
                         }
                     });
