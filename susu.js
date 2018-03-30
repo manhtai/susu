@@ -51,8 +51,10 @@ controller.on('rtm_close', () => {
 });
 
 require('./chatter')(controller);
-require('./whoisin').whoIsIn(controller);
 require('./strava')(controller);
+
+require('./whoisin').whoIsIn(controller);
+require('./commands').reminderJob(controller);
 
 // Setup server
 var static_dir =  __dirname + '/public';
