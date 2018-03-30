@@ -557,7 +557,7 @@ module.exports = (controller) => {
                     break;
 
                 case 'refresh':
-                    command.reminderJob(controller);
+                    commands.reminderJob(controller);
                     bot.reply(message, 'Refresh success!');
                     break;
 
