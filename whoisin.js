@@ -385,7 +385,7 @@ class AttachmentLine {
 
 
 function getAhemResponse(message) {
-    var yes_or_no_callback = message.command == '/ahem' ? 'yes_or_no_callback' : 'yes_or_no_callback_m';
+    var yes_or_no_callback = message.command == '/ahemm' ? 'yes_or_no_callback_m' : 'yes_or_no_callback';
 
     // Create new message
     var lines = message.text.split('|').map(it => it.trim());
